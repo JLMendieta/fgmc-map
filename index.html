@@ -90,6 +90,18 @@
             border-color: rgba(100,149,237,0.7);
         }
 
+        #lang-btn {
+            background: rgba(255,193,7,0.2);
+            border-color: rgba(255,193,7,0.45);
+            font-weight: 700;
+            min-width: 42px;
+            text-align: center;
+        }
+        #lang-btn:hover {
+            background: rgba(255,193,7,0.38);
+            border-color: rgba(255,193,7,0.75);
+        }
+
         /* ── Copyright bar ── */
         #copyright {
             position: fixed;
@@ -404,42 +416,43 @@
     <!-- Top bar -->
     <div id="top-bar">
         <div>
-            <h1>Global FGM/C Prevalence</h1>
-            <div class="source-line">Sources: UNICEF Global Database 2024 &nbsp;·&nbsp; Equality Now 2025 &nbsp;·&nbsp; Primary field studies</div>
+            <h1 data-i18n="title">Global FGM/C Prevalence</h1>
+            <div class="source-line" data-i18n="sourceLine">Sources: UNICEF Global Database 2024 &nbsp;&middot;&nbsp; Equality Now 2025 &nbsp;&middot;&nbsp; Primary field studies</div>
         </div>
         <div id="top-bar-right">
             <div id="stats-strip"><!-- populated by JS --></div>
-            <button id="reveal-all-btn" class="ctrl-btn" onclick="revealAll()">&#9675; Reveal All</button>
-            <button id="reset-btn"      class="ctrl-btn" onclick="resetColors()">&#8635; Reset</button>
+            <button id="reveal-all-btn" class="ctrl-btn" onclick="revealAll()" data-i18n="revealAll">&#9675; Reveal All</button>
+            <button id="reset-btn"      class="ctrl-btn" onclick="resetColors()" data-i18n="reset">&#8635; Reset</button>
+            <button id="lang-btn"       class="ctrl-btn" onclick="switchLanguage()">DE</button>
         </div>
     </div>
 
     <!-- Loading overlay -->
     <div id="loading">
         <div class="spinner"></div>
-        <div style="font-size:14px; opacity:0.75;">Loading map data&hellip;</div>
+        <div id="loading-text" style="font-size:14px; opacity:0.75;" data-i18n="loadingMap">Loading map data&hellip;</div>
     </div>
 
     <!-- Map -->
     <div id="map"></div>
 
     <!-- Keyboard hint -->
-    <div id="keyboard-hint">&#8592; &#8594; &nbsp;Navigate countries &nbsp;&nbsp;·&nbsp;&nbsp; Esc &nbsp;Close &nbsp;&nbsp;·&nbsp;&nbsp; S &nbsp;Sources</div>
+    <div id="keyboard-hint" data-i18n="keyboardHint">&#8592; &#8594; &nbsp;Navigate countries &nbsp;&nbsp;&middot;&nbsp;&nbsp; Esc &nbsp;Close &nbsp;&nbsp;&middot;&nbsp;&nbsp; S &nbsp;Sources</div>
 
     <!-- Copyright -->
-    <div id="copyright">&copy; 2026 J.L. Mendieta &nbsp;&middot;&nbsp; All rights reserved</div>
+    <div id="copyright" data-i18n="copyright">&copy; 2026 J.L. Mendieta &nbsp;&middot;&nbsp; All rights reserved</div>
 
     <!-- Sources modal -->
     <div id="sources-backdrop" onclick="if(event.target===this)closeSources()">
         <div id="sources-modal">
             <span class="close-btn" onclick="closeSources()">&times;</span>
-            <h2>Data Sources</h2>
+            <h2 data-i18n="sourcesTitle">Data Sources</h2>
 
             <div class="source-block">
                 <h3>UNICEF (2024) &ndash; Global Update</h3>
                 <span class="short-label">UNICEF 2024</span>
                 <p class="full-citation">UNICEF. 2024. <em>Female Genital Mutilation: A Global Concern &ndash; 2024 Update.</em> New York: UNICEF.</p>
-                <p class="method-note">Nationally representative DHS/MICS household survey; prevalence among women 15&ndash;49 (and girls where available).</p>
+                <p class="method-note" data-i18n="sourcesMethod1">Nationally representative DHS/MICS household survey; prevalence among women 15&ndash;49 (and girls where available).</p>
             </div>
 
             <div class="source-block">
@@ -447,28 +460,28 @@
                 <span class="short-label">UNICEF Country Profile &nbsp;/&nbsp; UNFPA Snapshot</span>
                 <p class="full-citation">UNICEF. Various years. <em>Female Genital Mutilation/Cutting Country Profiles</em> (DHS/MICS-based country briefs). New York: UNICEF.<br>
                 UNFPA. 2023&ndash;2024. <em>FGM Country Snapshot: [Country name].</em> New York: UNFPA.</p>
-                <p class="method-note">Latest available DHS/MICS or equivalent national survey; directly reported prevalence.</p>
+                <p class="method-note" data-i18n="sourcesMethod2">Latest available DHS/MICS or equivalent national survey; directly reported prevalence.</p>
             </div>
 
             <div class="source-block">
                 <h3>Farouki et al. (2022) &ndash; Meta-analysis</h3>
                 <span class="short-label">Farouki et al. 2022</span>
                 <p class="full-citation">Farouki, L. et al. 2022. &ldquo;The Global Prevalence of Female Genital Mutilation/Cutting: A Systematic Review and Meta-analysis.&rdquo; <em>PLOS Medicine</em> 19(8): e1004061.</p>
-                <p class="method-note">Pooled estimate from systematic review and meta-analysis (GLMM/random-effects) based on multiple surveys.</p>
+                <p class="method-note" data-i18n="sourcesMethod3">Pooled estimate from systematic review and meta-analysis (GLMM/random-effects) based on multiple surveys.</p>
             </div>
 
             <div class="source-block">
                 <h3>End FGM European Network, Equality Now &amp; US End FGM/C Network (2025)</h3>
                 <span class="short-label">Time is Now 2025</span>
                 <p class="full-citation">End FGM European Network, Equality Now &amp; US End FGM/C Network. 2025. <em>The Time is Now: End Female Genital Mutilation/Cutting (FGM/C): An Urgent Need for Global Response.</em> Brussels / London / Washington DC.</p>
-                <p class="method-note">Where only presence is known: documented presence from case reports, legal/NGO, or small studies; no nationally representative prevalence. Where numeric prevalence is quoted (e.g. Malaysia, Indonesia): estimate from non-national or mixed study sources as compiled in this advocacy report.</p>
+                <p class="method-note" data-i18n="sourcesMethod4">Where only presence is known: documented presence from case reports, legal/NGO, or small studies; no nationally representative prevalence. Where numeric prevalence is quoted (e.g. Malaysia, Indonesia): estimate from non-national or mixed study sources as compiled in this advocacy report.</p>
             </div>
 
             <div class="source-block">
                 <h3>Equality Now &amp; End FGM European Network (2020)</h3>
                 <span class="short-label">Call for Global Response 2020</span>
                 <p class="full-citation">Equality Now &amp; End FGM European Network. 2020. <em>Female Genital Mutilation/Cutting: A Call for a Global Response.</em> London / Brussels.</p>
-                <p class="method-note">Compilation from existing surveys and secondary sources; used to identify affected countries rather than as a primary numeric source.</p>
+                <p class="method-note" data-i18n="sourcesMethod5">Compilation from existing surveys and secondary sources; used to identify affected countries rather than as a primary numeric source.</p>
             </div>
         </div>
     </div>
@@ -482,75 +495,349 @@
             <div class="badge-row" id="modal-badges"></div>
             <div id="modal-legal-badge"></div>
             <div class="modal-text" id="modal-extended"></div>
-            <div class="modal-meta">
-                <strong>Source:</strong> <span id="modal-source"></span> (<span id="modal-year"></span>)<br>
-                <strong>Methodology:</strong> <span id="modal-method"></span>
-            </div>
-            <div class="modal-nav-hint">Use &larr; &rarr; arrow keys to navigate between countries</div>
+            <div class="modal-meta" id="modal-meta"></div>
+            <div class="modal-nav-hint" data-i18n="navHint">Use &larr; &rarr; arrow keys to navigate between countries</div>
         </div>
     </div>
 
     <script>
+        // ── TRANSLATIONS ──────────────────────────────────────────────────────────
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                title:          'Global FGM/C Prevalence',
+                sourceLine:     'Sources: UNICEF Global Database 2024 \u00a0\u00b7\u00a0 Equality Now 2025 \u00a0\u00b7\u00a0 Primary field studies',
+                revealAll:      '\u25cb Reveal All',
+                reset:          '\u21bb Reset',
+                countriesTracked: 'Countries tracked',
+                withCriminalLaw:  'With criminal law',
+                loadingMap:     'Loading map data\u2026',
+                keyboardHint:   '\u2190 \u2192\u00a0 Navigate countries \u00a0\u00a0\u00b7\u00a0\u00a0 Esc\u00a0 Close \u00a0\u00a0\u00b7\u00a0\u00a0 S\u00a0 Sources',
+                copyright:      '\u00a9 2026 J.L. Mendieta \u00a0\u00b7\u00a0 All rights reserved',
+                sourcesTitle:   'Data Sources',
+                sourcesMethod1: 'Nationally representative DHS/MICS household survey; prevalence among women 15\u201349 (and girls where available).',
+                sourcesMethod2: 'Latest available DHS/MICS or equivalent national survey; directly reported prevalence.',
+                sourcesMethod3: 'Pooled estimate from systematic review and meta-analysis (GLMM/random-effects) based on multiple surveys.',
+                sourcesMethod4: 'Where only presence is known: documented presence from case reports, legal/NGO, or small studies; no nationally representative prevalence. Where numeric prevalence is quoted (e.g. Malaysia, Indonesia): estimate from non-national or mixed study sources as compiled in this advocacy report.',
+                sourcesMethod5: 'Compilation from existing surveys and secondary sources; used to identify affected countries rather than as a primary numeric source.',
+                sourceLabel:    'Source',
+                methodLabel:    'Methodology',
+                navHint:        'Use \u2190 \u2192 arrow keys to navigate between countries',
+                legendTitle:    'Prevalence (%)',
+                legendNoData:   'No data',
+                legendSub:      'Sub-national data',
+                nationalEst:    'National est.',
+                community:      'Community',
+                prevalence:     'Prevalence',
+                tooltipSub:     'Sub-national data',
+                loadError:      'Failed to load map shapes.<br>Check your internet connection.'
+            },
+            de: {
+                title:          'Weltweite FGM/C-Pr\u00e4valenz',
+                sourceLine:     'Quellen: UNICEF Global Database 2024 \u00a0\u00b7\u00a0 Equality Now 2025 \u00a0\u00b7\u00a0 Prim\u00e4rstudien',
+                revealAll:      '\u25cb Alle anzeigen',
+                reset:          '\u21bb Zur\u00fccksetzen',
+                countriesTracked: 'Erfasste L\u00e4nder',
+                withCriminalLaw:  'Mit Strafgesetz',
+                loadingMap:     'Kartendaten werden geladen\u2026',
+                keyboardHint:   '\u2190 \u2192\u00a0 L\u00e4nder navigieren \u00a0\u00a0\u00b7\u00a0\u00a0 Esc\u00a0 Schlie\u00dfen \u00a0\u00a0\u00b7\u00a0\u00a0 S\u00a0 Quellen',
+                copyright:      '\u00a9 2026 J.L. Mendieta \u00a0\u00b7\u00a0 Alle Rechte vorbehalten',
+                sourcesTitle:   'Datenquellen',
+                sourcesMethod1: 'National repr\u00e4sentative DHS/MICS-Haushaltsumfrage; Pr\u00e4valenz bei Frauen 15\u201349 (und M\u00e4dchen, wo verf\u00fcgbar).',
+                sourcesMethod2: 'Neueste verf\u00fcgbare DHS/MICS- oder gleichwertige nationale Umfrage; direkt gemeldete Pr\u00e4valenz.',
+                sourcesMethod3: 'Gepoolte Sch\u00e4tzung aus systematischer \u00dcberpr\u00fcfung und Meta-Analyse (GLMM/Zufallseffekte) auf Basis mehrerer Erhebungen.',
+                sourcesMethod4: 'Wo nur Vorkommen bekannt: dokumentiertes Vorkommen aus Fallberichten, Rechts-/NGO-Quellen oder Kleinstudien; keine national repr\u00e4sentative Pr\u00e4valenz. Wo numerische Pr\u00e4valenz angegeben (z.\u202fB. Malaysia, Indonesien): Sch\u00e4tzung aus nicht-nationalen oder gemischten Studienquellen, zusammengestellt in diesem Advocacy-Bericht.',
+                sourcesMethod5: 'Zusammenstellung aus bestehenden Erhebungen und Sekund\u00e4rquellen; dient zur Identifizierung betroffener L\u00e4nder, nicht als prim\u00e4re numerische Quelle.',
+                sourceLabel:    'Quelle',
+                methodLabel:    'Methodik',
+                navHint:        'Pfeiltasten \u2190 \u2192 zum Navigieren zwischen L\u00e4ndern verwenden',
+                legendTitle:    'Pr\u00e4valenz (%)',
+                legendNoData:   'Keine Daten',
+                legendSub:      'Subnationale Daten',
+                nationalEst:    'Nationale Sch\u00e4tzung',
+                community:      'Gemeinschaft',
+                prevalence:     'Pr\u00e4valenz',
+                tooltipSub:     'Subnationale Daten',
+                loadError:      'Kartenformen konnten nicht geladen werden.<br>Bitte Internetverbindung pr\u00fcfen.'
+            }
+        };
+
+        function t(key) { return translations[currentLang][key]; }
+
         // ── 1. DATA ──────────────────────────────────────────────────────────────
         const fgmcData = {
-            "BEN": { "country": "Benin", "scope_of_data": "National", "reported_prevalence": "9.2", "cleaned_prevalence": 9.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence in Single Digits", "extended_text": "Benin has a national prevalence of 9.2%. The country has enacted specific criminal provisions against FGM/C, which has contributed to a downward trend in the practice over recent decades.", "legal_status": "Specific criminal provision" },
-            "BFA": { "country": "Burkina Faso", "scope_of_data": "National", "reported_prevalence": "56.1", "cleaned_prevalence": 56.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Significant Progress Over Time", "extended_text": "Burkina Faso has demonstrated strong progress, with FGM/C prevalence dropping from 75% to 56.1%. The country has robust specific national anti-FGM/C laws in place.", "legal_status": "Specific criminal provision" },
-            "CMR": { "country": "Cameroon", "scope_of_data": "National", "reported_prevalence": "1.4", "cleaned_prevalence": 1.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Low National Prevalence", "extended_text": "Cameroon reports a low national prevalence of 1.4%. The government has enacted specific criminal provisions to prohibit the practice.", "legal_status": "Specific criminal provision" },
-            "CAF": { "country": "Central African Republic", "scope_of_data": "National", "reported_prevalence": "21.6", "cleaned_prevalence": 21.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "One in Five Women Affected", "extended_text": "With a national prevalence of 21.6%, the Central African Republic continues to tackle FGM/C. The practice is specifically prohibited under national law.", "legal_status": "Specific criminal provision" },
-            "TCD": { "country": "Chad", "scope_of_data": "National", "reported_prevalence": "34.1", "cleaned_prevalence": 34.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Exceeds One-Third", "extended_text": "Chad has a prevalence of 34.1%. Though FGM/C was outlawed by a 2002 Reproductive Health Law, the implementation decree required to bring the law into force only became effective in 2020.", "legal_status": "Specific criminal provision (2020 decree)" },
-            "COL": { "country": "Colombia", "scope_of_data": "Sub-national: Emberá community", "reported_prevalence": "66.7", "cleaned_prevalence": 0.32, "source": "Colombian National Indigenous Organization (ONIC)", "year_of_source": "2012", "method_of_calculation": "Normalized: 66.7% weighted by Emberá population size (~0.48% of Colombia)", "headline": "Concentrated in Indigenous Communities", "extended_text": "While national prevalence is estimated at ~0.32%, Type I FGM/C (clitoridectomy) reaches 66.7% within the Emberá indigenous community. The procedure is typically performed on newborn babies.", "legal_status": "No specific law (Bills pending in Congress as of 2024)" },
-            "CIV": { "country": "Côte d'Ivoire", "scope_of_data": "National", "reported_prevalence": "36.7", "cleaned_prevalence": 36.7, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Above 30%", "extended_text": "Côte d'Ivoire has a national prevalence of 36.7%. The country has specifically criminalized FGM/C under its national legal framework.", "legal_status": "Specific criminal provision" },
-            "DJI": { "country": "Djibouti", "scope_of_data": "National", "reported_prevalence": "90.1", "cleaned_prevalence": 90.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Near-Universal Prevalence", "extended_text": "FGM/C remains highly prevalent at 90.1% in Djibouti, affecting the vast majority of women and girls despite specific legal prohibitions being in place.", "legal_status": "Specific criminal provision" },
-            "EGY": { "country": "Egypt", "scope_of_data": "National", "reported_prevalence": "87.2", "cleaned_prevalence": 87.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Medicalization Rates", "extended_text": "Egypt has a prevalence of 87.2%. Despite strict legal bans, the country sees very high rates of medicalized FGM/C, with the vast majority of procedures performed by doctors and healthcare professionals.", "legal_status": "Specific criminal provision" },
-            "ERI": { "country": "Eritrea", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Prevalence at 83%", "extended_text": "Eritrea maintains a high FGM/C prevalence of 83.0%. The practice continues broadly despite being expressly criminalized by the government.", "legal_status": "Specific criminal provision" },
-            "ETH": { "country": "Ethiopia", "scope_of_data": "National", "reported_prevalence": "65.2", "cleaned_prevalence": 65.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Complex Dynamics and Conflict", "extended_text": "Ethiopia's prevalence is 65.2%. Progress is challenged by institutional fragility, conflict, and a 2024 fatwa from the Islamic Affairs Supreme Council that supported medicalized FGM/C.", "legal_status": "Specific criminal provision" },
-            "GMB": { "country": "Gambia", "scope_of_data": "National", "reported_prevalence": "72.6", "cleaned_prevalence": 72.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Recent Pushback Against Laws", "extended_text": "Prevalence remains stagnant at 72.6%. In 2024, The Gambia faced a major legislative attempt to repeal its 2015 Women's Amendment Act banning FGM/C, which was successfully defeated by activists.", "legal_status": "Specific criminal provision" },
-            "GHA": { "country": "Ghana", "scope_of_data": "National", "reported_prevalence": "2.4", "cleaned_prevalence": 2.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Approaching Elimination", "extended_text": "Ghana reports a very low national prevalence of 2.4%, supported by specific national legislation aiming to eradicate the practice entirely.", "legal_status": "Specific criminal provision" },
-            "GIN": { "country": "Guinea", "scope_of_data": "National", "reported_prevalence": "94.5", "cleaned_prevalence": 94.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Almost Universal Practice", "extended_text": "Guinea has one of the highest prevalence rates globally at 94.5%. The practice remains deeply entrenched in social norms despite specific national anti-FGM/C laws.", "legal_status": "Specific criminal provision" },
-            "GNB": { "country": "Guinea-Bissau", "scope_of_data": "National", "reported_prevalence": "52.1", "cleaned_prevalence": 52.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Over 50%", "extended_text": "Guinea-Bissau reports a 52.1% prevalence. While FGM/C is specifically outlawed, progress in reducing the rate has largely stagnated in recent years.", "legal_status": "Specific criminal provision" },
-            "IND": { "country": "India", "scope_of_data": "Sub-national: Bohra community", "reported_prevalence": "75.0", "cleaned_prevalence": 0.05, "source": "Anantnarayan, Diler & Menon", "year_of_source": "2018", "method_of_calculation": "Normalized: 75% weighted by Bohra population size (~0.07% of India)", "headline": "Practiced by the Bohra Community", "extended_text": "National prevalence is statistically tiny (~0.05%), but surveys show 75% prevalence within the Dawoodi Bohra community, who practice Type I FGM/C locally known as 'Khatna' or 'Khafz'.", "legal_status": "No specific law" },
-            "IDN": { "country": "Indonesia", "scope_of_data": "National (Girls 0–11)", "reported_prevalence": "51.2", "cleaned_prevalence": 51.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (measured specifically among girls aged 0–11)", "headline": "Medicalized Practice Among Girls", "extended_text": "A 51.2% prevalence is reported among girls aged 0–11. The practice (Type I/IV) is highly medicalized and often provided as part of a child delivery package in hospitals.", "legal_status": "Prohibited for infants/toddlers (Gov. Regulation No.28/2024)" },
-            "IRN": { "country": "Iran", "scope_of_data": "Sub-national: Western/Southern provinces", "reported_prevalence": "16.0–60.0", "cleaned_prevalence": 3.8, "source": "Ahmady", "year_of_source": "2015", "method_of_calculation": "Normalized: Regional prevalence weighted by estimated minority population (~10% of Iran)", "headline": "Regional and Minority Focus", "extended_text": "National estimates range from ~1.6–6.0%, but prevalence reaches 16–60% in specific Western and Southern provinces among Kurdish and Sunni minorities. Type I is most common.", "legal_status": "Art. 663 of Penal Code imposes fine" },
-            "IRQ": { "country": "Iraq", "scope_of_data": "National", "reported_prevalence": "7.4", "cleaned_prevalence": 7.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Concentrated in Kurdistan", "extended_text": "National prevalence is 7.4%, but reaches 37.5% in the semi-autonomous Kurdistan region. Kurdistan is notably the only region in Iraq where FGM/C is expressly criminalized.", "legal_status": "Criminalized only in Kurdistan region" },
-            "KEN": { "country": "Kenya", "scope_of_data": "National", "reported_prevalence": "15.0", "cleaned_prevalence": 15.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Strong Progress but Localized Resistance", "extended_text": "Kenya's national prevalence dropped significantly to 15.0%. However, FGM/C remains near-universal among the Somali community in the North Eastern province due to social expectations.", "legal_status": "Specific criminal provision" },
-            "KWT": { "country": "Kuwait", "scope_of_data": "Sub-national: Pregnant women in clinics", "reported_prevalence": "38.0", "cleaned_prevalence": 38.0, "source": "Chibber et al.", "year_of_source": "2011", "method_of_calculation": "Clinical examination sample used as proxy for national average", "headline": "Evidence from Clinical Studies", "extended_text": "National data is scarce, but a clinical study of pregnant women found a 38% prevalence. The practice was linked to adverse maternal outcomes and psychological trauma.", "legal_status": "No specific law" },
-            "LBR": { "country": "Liberia", "scope_of_data": "National", "reported_prevalence": "31.8", "cleaned_prevalence": 31.8, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Decreasing but Unregulated", "extended_text": "Prevalence has dropped from 44% to 31.8%. The practice is closely tied to Sande society initiations. Liberia currently lacks a specific national law prohibiting FGM/C.", "legal_status": "No specific law" },
-            "MYS": { "country": "Malaysia", "scope_of_data": "Sub-national: Ethnic Malays", "reported_prevalence": "93.0", "cleaned_prevalence": 53.0, "source": "Time is Now 2025", "year_of_source": "2024", "method_of_calculation": "Normalized: 93% weighted by Ethnic Malay population size (57% of Malaysia)", "headline": "Widespread Practice Among Ethnic Malays", "extended_text": "Prevalence is estimated at 53% nationally (93% among ethnic Malays). Type I/IV ('sunat perempuan') is commonly performed on babies aged 1–2 months and is increasingly medicalized.", "legal_status": "No specific law" },
-            "MDV": { "country": "Maldives", "scope_of_data": "National", "reported_prevalence": "12.9", "cleaned_prevalence": 12.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Type IV FGM/C Prevalent", "extended_text": "Prevalence is 12.9% among women 15–49, but only 1% among girls 0–14, indicating a sharp decline. The practice mainly consists of Type IV (small cuts/pricks to the genitals).", "legal_status": "No specific law" },
-            "MLI": { "country": "Mali", "scope_of_data": "National", "reported_prevalence": "88.6", "cleaned_prevalence": 88.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Prevalence, No Legal Framework", "extended_text": "Mali has a stagnant, high prevalence of 88.6%. It remains one of the most affected countries globally with no specific law addressing FGM/C.", "legal_status": "No specific law" },
-            "MRT": { "country": "Mauritania", "scope_of_data": "National", "reported_prevalence": "63.9", "cleaned_prevalence": 63.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence at 63.9%", "extended_text": "Mauritania reports a 63.9% prevalence rate. The government has enacted a specific criminal provision, though enforcement and community abandonment remain challenges.", "legal_status": "Specific criminal provision" },
-            "NER": { "country": "Niger", "scope_of_data": "National", "reported_prevalence": "2.0", "cleaned_prevalence": 2.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Under 5%", "extended_text": "Niger reports a low national prevalence of 2.0%. The practice is explicitly criminalized under national law, contributing to its near elimination.", "legal_status": "Specific criminal provision" },
-            "NGA": { "country": "Nigeria", "scope_of_data": "National", "reported_prevalence": "15.1", "cleaned_prevalence": 15.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Large Burden Amidst Fragility", "extended_text": "Nigeria has a prevalence of 15.1%. Due to its massive population and conflict-affected regions, it accounts for one of the largest absolute numbers of FGM/C survivors in the world.", "legal_status": "Specific criminal provision" },
-            "OMN": { "country": "Oman", "scope_of_data": "Sub-national: Ad-Dakhiliya & Muscat", "reported_prevalence": "78.0–95.5", "cleaned_prevalence": 86.7, "source": "Thabet & Al-Kharousi", "year_of_source": "2018", "method_of_calculation": "Average of two regional small-scale surveys used as proxy", "headline": "High Prevalence in Sampled Regions", "extended_text": "Regional surveys in Ad-Dakhiliya and Muscat show 78–95.5% prevalence. Type I is the most common form practiced. Oman has enacted specific criminal provisions against FGM/C.", "legal_status": "Specific criminal provision" },
-            "RUS": { "country": "Russia", "scope_of_data": "Sub-national: Avars in Dagestan", "reported_prevalence": "25.0–100.0", "cleaned_prevalence": 0.35, "source": "Antonova & Siradzhudinova", "year_of_source": "2016", "method_of_calculation": "Normalized: Regional prevalence weighted by Avar population size (~0.7% of Russia)", "headline": "Practiced in Dagestan", "extended_text": "FGM/C (Types I and II) is practiced by Avar and Akhvakh communities in East Dagestan, with local prevalence reaching up to 100%. An estimated 1,240 girls are at risk annually.", "legal_status": "No specific law" },
-            "SAU": { "country": "Saudi Arabia", "scope_of_data": "Sub-national: Jeddah & Hali regions", "reported_prevalence": "18.2–80.3", "cleaned_prevalence": 18.2, "source": "Rouzi et al.", "year_of_source": "2019", "method_of_calculation": "Jeddah mixed-demographic study used as a conservative proxy for national average", "headline": "Medicalized FGM/C", "extended_text": "Studies show localized prevalence up to 80% in regions like Hali. The practice is highly medicalized (over 90% performed by doctors) and affects both Saudi and diaspora women.", "legal_status": "No specific law" },
-            "SEN": { "country": "Senegal", "scope_of_data": "National", "reported_prevalence": "25.2", "cleaned_prevalence": 25.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Stagnant Progress", "extended_text": "Senegal has a prevalence of 25.2%. Despite having a specific criminal provision in place, progress in reducing the rate of FGM/C has stagnated in recent years.", "legal_status": "Specific criminal provision" },
-            "SLE": { "country": "Sierra Leone", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Tied to Bondo Society", "extended_text": "Sierra Leone has an 83.0% prevalence, deeply tied to secretive Bondo Society initiations. Recent high-profile deaths of girls have sparked outrage, yet no specific anti-FGM/C law exists.", "legal_status": "No specific law" },
-            "SGP": { "country": "Singapore", "scope_of_data": "Sub-national: Muslim/Malay women", "reported_prevalence": "75.0", "cleaned_prevalence": 11.25, "source": "Time is Now 2025", "year_of_source": "2020", "method_of_calculation": "Normalized: 75% weighted by Malay/Muslim population size (~15% of Singapore)", "headline": "Practiced by Malay/Muslim Community", "extended_text": "While national prevalence is estimated at ~11.25%, pilot surveys indicate a 75% prevalence within the Malay/Muslim minority, mostly involving Type I/IV procedures in early childhood.", "legal_status": "No specific law" },
-            "SOM": { "country": "Somalia", "scope_of_data": "National", "reported_prevalence": "99.2", "cleaned_prevalence": 99.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Highest Prevalence Globally", "extended_text": "Somalia has a near-universal prevalence of 99.2%. While the Constitution prohibits it, there is no national legislation, though the Galmudug state passed a specific ban in 2024.", "legal_status": "No national legislation (Constitutional ban only)" },
-            "SDN": { "country": "Sudan", "scope_of_data": "National", "reported_prevalence": "86.6", "cleaned_prevalence": 86.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Severe Forms and Recent Legal Action", "extended_text": "Sudan has an 86.6% prevalence, with Type III (infibulation) being highly common. In July 2020, Sudan amended its Criminal Code to explicitly criminalize the practice.", "legal_status": "Specific criminal provision (2020)" },
-            "TZA": { "country": "Tanzania", "scope_of_data": "National", "reported_prevalence": "8.2", "cleaned_prevalence": 8.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Below 10%", "extended_text": "Tanzania reports an 8.2% prevalence. The country has a specific criminal provision prohibiting FGM/C and has made steady progress toward abandonment.", "legal_status": "Specific criminal provision" },
-            "TGO": { "country": "Togo", "scope_of_data": "National", "reported_prevalence": "3.1", "cleaned_prevalence": 3.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Approaching Elimination", "extended_text": "Togo has a very low national prevalence of 3.1%. The government enforces a specific criminal provision against the practice.", "legal_status": "Specific criminal provision" },
-            "UGA": { "country": "Uganda", "scope_of_data": "National", "reported_prevalence": "0.3", "cleaned_prevalence": 0.3, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Near Elimination", "extended_text": "Uganda has nearly eliminated the practice with a prevalence of just 0.3%, supported by robust specific national legislation against FGM/C.", "legal_status": "Specific criminal provision" },
-            "ARE": { "country": "United Arab Emirates", "scope_of_data": "Sub-national: Sampled populations", "reported_prevalence": "34.0–41.4", "cleaned_prevalence": 37.7, "source": "Awar & Al-Jefout et al.", "year_of_source": "2020", "method_of_calculation": "Average of two small-scale surveys used as proxy", "headline": "FGM/C in the UAE", "extended_text": "Small-scale studies indicate a 34–41% prevalence in the United Arab Emirates, mainly Type I. Currently, there is no specific anti-FGM/C legislation in place.", "legal_status": "No specific law" },
-            "YEM": { "country": "Yemen", "scope_of_data": "National", "reported_prevalence": "18.5", "cleaned_prevalence": 18.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence at 18.5%", "extended_text": "Yemen reports an 18.5% prevalence, with Type II FGM/C being most commonly practiced. There is currently no specific law addressing the practice.", "legal_status": "No specific law" },
-            "ZMB": { "country": "Zambia", "scope_of_data": "National", "reported_prevalence": "0.7", "cleaned_prevalence": 0.7, "source": "Zambia Sexual Behaviour Survey (ZSBS)", "year_of_source": "2009", "method_of_calculation": "Random sampling of 2500 households", "headline": "Low National Prevalence", "extended_text": "Zambia has a prevalence of 0.7%, with some evidence pointing to practices like labia pulling among diaspora communities. The country has enacted a specific criminal provision.", "legal_status": "Specific criminal provision" }
+            "BEN": { "country": "Benin", "scope_of_data": "National", "reported_prevalence": "9.2", "cleaned_prevalence": 9.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence in Single Digits",
+                "extended_text": "Benin has a national prevalence of 9.2%. The country has enacted specific criminal provisions against FGM/C, which has contributed to a downward trend in the practice over recent decades.",
+                "headline_de": "Pr\u00e4valenz im einstelligen Bereich",
+                "extended_text_de": "Benin hat eine nationale Pr\u00e4valenz von 9,2\u00a0%. Das Land hat spezifische Strafbestimmungen gegen FGM/C erlassen, was zu einem R\u00fcckgang der Praxis in den letzten Jahrzehnten beigetragen hat.",
+                "legal_status": "Specific criminal provision" },
+            "BFA": { "country": "Burkina Faso", "scope_of_data": "National", "reported_prevalence": "56.1", "cleaned_prevalence": 56.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Significant Progress Over Time",
+                "extended_text": "Burkina Faso has demonstrated strong progress, with FGM/C prevalence dropping from 75% to 56.1%. The country has robust specific national anti-FGM/C laws in place.",
+                "headline_de": "Bedeutende Fortschritte im Laufe der Zeit",
+                "extended_text_de": "Burkina Faso hat erhebliche Fortschritte erzielt \u2013 die FGM/C-Pr\u00e4valenz sank von 75\u00a0% auf 56,1\u00a0%. Das Land verf\u00fcgt \u00fcber robuste spezifische nationale Anti-FGM/C-Gesetze.",
+                "legal_status": "Specific criminal provision" },
+            "CMR": { "country": "Cameroon", "scope_of_data": "National", "reported_prevalence": "1.4", "cleaned_prevalence": 1.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Low National Prevalence",
+                "extended_text": "Cameroon reports a low national prevalence of 1.4%. The government has enacted specific criminal provisions to prohibit the practice.",
+                "headline_de": "Niedrige nationale Pr\u00e4valenz",
+                "extended_text_de": "Kamerun meldet eine niedrige nationale Pr\u00e4valenz von 1,4\u00a0%. Die Regierung hat spezifische Strafbestimmungen erlassen, um die Praxis zu verbieten.",
+                "legal_status": "Specific criminal provision" },
+            "CAF": { "country": "Central African Republic", "scope_of_data": "National", "reported_prevalence": "21.6", "cleaned_prevalence": 21.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "One in Five Women Affected",
+                "extended_text": "With a national prevalence of 21.6%, the Central African Republic continues to tackle FGM/C. The practice is specifically prohibited under national law.",
+                "headline_de": "Jede f\u00fcnfte Frau betroffen",
+                "extended_text_de": "Mit einer nationalen Pr\u00e4valenz von 21,6\u00a0% bek\u00e4mpft die Zentralafrikanische Republik weiterhin FGM/C. Die Praxis ist nach nationalem Recht ausdr\u00fccklich verboten.",
+                "legal_status": "Specific criminal provision" },
+            "TCD": { "country": "Chad", "scope_of_data": "National", "reported_prevalence": "34.1", "cleaned_prevalence": 34.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence Exceeds One-Third",
+                "extended_text": "Chad has a prevalence of 34.1%. Though FGM/C was outlawed by a 2002 Reproductive Health Law, the implementation decree required to bring the law into force only became effective in 2020.",
+                "headline_de": "Pr\u00e4valenz \u00fcbersteigt ein Drittel",
+                "extended_text_de": "Der Tschad hat eine Pr\u00e4valenz von 34,1\u00a0%. Obwohl FGM/C bereits 2002 durch ein Fortpflanzungsgesundheitsgesetz verboten wurde, trat das zur Umsetzung erforderliche Durchf\u00fchrungsdekret erst 2020 in Kraft.",
+                "legal_status": "Specific criminal provision (2020 decree)" },
+            "COL": { "country": "Colombia", "scope_of_data": "Sub-national: Ember\u00e1 community", "reported_prevalence": "66.7", "cleaned_prevalence": 0.32, "source": "Colombian National Indigenous Organization (ONIC)", "year_of_source": "2012", "method_of_calculation": "Normalized: 66.7% weighted by Ember\u00e1 population size (~0.48% of Colombia)",
+                "headline": "Concentrated in Indigenous Communities",
+                "extended_text": "While national prevalence is estimated at ~0.32%, Type I FGM/C (clitoridectomy) reaches 66.7% within the Ember\u00e1 indigenous community. The procedure is typically performed on newborn babies.",
+                "headline_de": "Konzentriert in indigenen Gemeinschaften",
+                "extended_text_de": "W\u00e4hrend die nationale Pr\u00e4valenz auf ~0,32\u00a0% gesch\u00e4tzt wird, erreicht FGM/C Typ I (Klitoridektomie) in der indigenen Ember\u00e1-Gemeinschaft 66,7\u00a0%. Der Eingriff wird typischerweise an Neugeborenen durchgef\u00fchrt.",
+                "legal_status": "No specific law (Bills pending in Congress as of 2024)" },
+            "CIV": { "country": "C\u00f4te d\u2019Ivoire", "scope_of_data": "National", "reported_prevalence": "36.7", "cleaned_prevalence": 36.7, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence Above 30%",
+                "extended_text": "C\u00f4te d\u2019Ivoire has a national prevalence of 36.7%. The country has specifically criminalized FGM/C under its national legal framework.",
+                "headline_de": "Pr\u00e4valenz \u00fcber 30\u00a0%",
+                "extended_text_de": "C\u00f4te d\u2019Ivoire hat eine nationale Pr\u00e4valenz von 36,7\u00a0%. Das Land hat FGM/C im Rahmen seines nationalen Rechtsrahmens unter Strafe gestellt.",
+                "legal_status": "Specific criminal provision" },
+            "DJI": { "country": "Djibouti", "scope_of_data": "National", "reported_prevalence": "90.1", "cleaned_prevalence": 90.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Near-Universal Prevalence",
+                "extended_text": "FGM/C remains highly prevalent at 90.1% in Djibouti, affecting the vast majority of women and girls despite specific legal prohibitions being in place.",
+                "headline_de": "Nahezu universelle Pr\u00e4valenz",
+                "extended_text_de": "FGM/C bleibt in Dschibuti mit 90,1\u00a0% weit verbreitet und betrifft die gro\u00dfe Mehrheit der Frauen und M\u00e4dchen, obwohl spezifische gesetzliche Verbote bestehen.",
+                "legal_status": "Specific criminal provision" },
+            "EGY": { "country": "Egypt", "scope_of_data": "National", "reported_prevalence": "87.2", "cleaned_prevalence": 87.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "High Medicalization Rates",
+                "extended_text": "Egypt has a prevalence of 87.2%. Despite strict legal bans, the country sees very high rates of medicalized FGM/C, with the vast majority of procedures performed by doctors and healthcare professionals.",
+                "headline_de": "Hohe Medikalisierungsraten",
+                "extended_text_de": "\u00c4gypten hat eine Pr\u00e4valenz von 87,2\u00a0%. Trotz strikter gesetzlicher Verbote weist das Land sehr hohe Raten medikalisierter FGM/C auf, wobei die gro\u00dfe Mehrheit der Eingriffe von \u00c4rzten und Gesundheitsfachkr\u00e4ften durchgef\u00fchrt wird.",
+                "legal_status": "Specific criminal provision" },
+            "ERI": { "country": "Eritrea", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "High Prevalence at 83%",
+                "extended_text": "Eritrea maintains a high FGM/C prevalence of 83.0%. The practice continues broadly despite being expressly criminalized by the government.",
+                "headline_de": "Hohe Pr\u00e4valenz bei 83\u00a0%",
+                "extended_text_de": "Eritrea hat eine hohe FGM/C-Pr\u00e4valenz von 83,0\u00a0%. Die Praxis setzt sich trotz ausdr\u00fccklicher Kriminalisierung durch die Regierung weiter fort.",
+                "legal_status": "Specific criminal provision" },
+            "ETH": { "country": "Ethiopia", "scope_of_data": "National", "reported_prevalence": "65.2", "cleaned_prevalence": 65.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Complex Dynamics and Conflict",
+                "extended_text": "Ethiopia\u2019s prevalence is 65.2%. Progress is challenged by institutional fragility, conflict, and a 2024 fatwa from the Islamic Affairs Supreme Council that supported medicalized FGM/C.",
+                "headline_de": "Komplexe Dynamiken und Konflikte",
+                "extended_text_de": "\u00c4thiopiens Pr\u00e4valenz betr\u00e4gt 65,2\u00a0%. Fortschritte werden durch institutionelle Fragilit\u00e4t, Konflikte und eine Fatwa des Obersten Rates f\u00fcr Islamische Angelegenheiten aus dem Jahr 2024, die medikalisierte FGM/C unterst\u00fctzte, erschwert.",
+                "legal_status": "Specific criminal provision" },
+            "GMB": { "country": "Gambia", "scope_of_data": "National", "reported_prevalence": "72.6", "cleaned_prevalence": 72.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Recent Pushback Against Laws",
+                "extended_text": "Prevalence remains stagnant at 72.6%. In 2024, The Gambia faced a major legislative attempt to repeal its 2015 Women\u2019s Amendment Act banning FGM/C, which was successfully defeated by activists.",
+                "headline_de": "J\u00fcngster Widerstand gegen Gesetze",
+                "extended_text_de": "Die Pr\u00e4valenz stagniert bei 72,6\u00a0%. Im Jahr 2024 gab es in Gambia einen wichtigen Versuch, den Women\u2019s Amendment Act von 2015 (FGM/C-Verbot) aufzuheben, der von Aktivistinnen erfolgreich abgewendet wurde.",
+                "legal_status": "Specific criminal provision" },
+            "GHA": { "country": "Ghana", "scope_of_data": "National", "reported_prevalence": "2.4", "cleaned_prevalence": 2.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Approaching Elimination",
+                "extended_text": "Ghana reports a very low national prevalence of 2.4%, supported by specific national legislation aiming to eradicate the practice entirely.",
+                "headline_de": "Auf dem Weg zur Eliminierung",
+                "extended_text_de": "Ghana meldet eine sehr niedrige nationale Pr\u00e4valenz von 2,4\u00a0%, gest\u00fctzt durch spezifische nationale Gesetzgebung zur vollst\u00e4ndigen Ausrottung der Praxis.",
+                "legal_status": "Specific criminal provision" },
+            "GIN": { "country": "Guinea", "scope_of_data": "National", "reported_prevalence": "94.5", "cleaned_prevalence": 94.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Almost Universal Practice",
+                "extended_text": "Guinea has one of the highest prevalence rates globally at 94.5%. The practice remains deeply entrenched in social norms despite specific national anti-FGM/C laws.",
+                "headline_de": "Nahezu universelle Praxis",
+                "extended_text_de": "Guinea hat mit 94,5\u00a0% eine der h\u00f6chsten Pr\u00e4valenzraten weltweit. Die Praxis ist trotz spezifischer nationaler Gesetze tief in sozialen Normen verwurzelt.",
+                "legal_status": "Specific criminal provision" },
+            "GNB": { "country": "Guinea-Bissau", "scope_of_data": "National", "reported_prevalence": "52.1", "cleaned_prevalence": 52.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence Over 50%",
+                "extended_text": "Guinea-Bissau reports a 52.1% prevalence. While FGM/C is specifically outlawed, progress in reducing the rate has largely stagnated in recent years.",
+                "headline_de": "Pr\u00e4valenz \u00fcber 50\u00a0%",
+                "extended_text_de": "Guinea-Bissau meldet eine Pr\u00e4valenz von 52,1\u00a0%. Obwohl FGM/C ausdr\u00fccklich verboten ist, haben die Fortschritte bei der Senkung der Rate in den letzten Jahren weitgehend stagniert.",
+                "legal_status": "Specific criminal provision" },
+            "IND": { "country": "India", "scope_of_data": "Sub-national: Bohra community", "reported_prevalence": "75.0", "cleaned_prevalence": 0.05, "source": "Anantnarayan, Diler & Menon", "year_of_source": "2018", "method_of_calculation": "Normalized: 75% weighted by Bohra population size (~0.07% of India)",
+                "headline": "Practiced by the Bohra Community",
+                "extended_text": "National prevalence is statistically tiny (~0.05%), but surveys show 75% prevalence within the Dawoodi Bohra community, who practice Type I FGM/C locally known as \u2018Khatna\u2019 or \u2018Khafz\u2019.",
+                "headline_de": "In der Bohra-Gemeinschaft praktiziert",
+                "extended_text_de": "Die nationale Pr\u00e4valenz ist statistisch minimal (~0,05\u00a0%), aber Umfragen zeigen 75\u00a0% Pr\u00e4valenz innerhalb der Dawoodi-Bohra-Gemeinschaft, die FGM/C Typ I \u2013 lokal als \u201eKhatna\u201c oder \u201eKhafz\u201c bekannt \u2013 praktiziert.",
+                "legal_status": "No specific law" },
+            "IDN": { "country": "Indonesia", "scope_of_data": "National (Girls 0\u201311)", "reported_prevalence": "51.2", "cleaned_prevalence": 51.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (measured specifically among girls aged 0\u201311)",
+                "headline": "Medicalized Practice Among Girls",
+                "extended_text": "A 51.2% prevalence is reported among girls aged 0\u201311. The practice (Type I/IV) is highly medicalized and often provided as part of a child delivery package in hospitals.",
+                "headline_de": "Medikalisierte Praxis bei M\u00e4dchen",
+                "extended_text_de": "Bei M\u00e4dchen im Alter von 0\u201311 Jahren wird eine Pr\u00e4valenz von 51,2\u00a0% gemeldet. Die Praxis (Typ I/IV) ist stark medikalisiert und wird oft als Teil eines Geburtspakets in Krankenh\u00e4usern angeboten.",
+                "legal_status": "Prohibited for infants/toddlers (Gov. Regulation No.28/2024)" },
+            "IRN": { "country": "Iran", "scope_of_data": "Sub-national: Western/Southern provinces", "reported_prevalence": "16.0\u201360.0", "cleaned_prevalence": 3.8, "source": "Ahmady", "year_of_source": "2015", "method_of_calculation": "Normalized: Regional prevalence weighted by estimated minority population (~10% of Iran)",
+                "headline": "Regional and Minority Focus",
+                "extended_text": "National estimates range from ~1.6\u20136.0%, but prevalence reaches 16\u201360% in specific Western and Southern provinces among Kurdish and Sunni minorities. Type I is most common.",
+                "headline_de": "Regionale und Minderheitenfokussierung",
+                "extended_text_de": "Nationale Sch\u00e4tzungen reichen von ~1,6\u20136,0\u00a0%, aber die Pr\u00e4valenz erreicht 16\u201360\u00a0% in bestimmten westlichen und s\u00fcdlichen Provinzen unter kurdischen und sunnitischen Minderheiten. Typ I ist am h\u00e4ufigsten.",
+                "legal_status": "Art. 663 of Penal Code imposes fine" },
+            "IRQ": { "country": "Iraq", "scope_of_data": "National", "reported_prevalence": "7.4", "cleaned_prevalence": 7.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Concentrated in Kurdistan",
+                "extended_text": "National prevalence is 7.4%, but reaches 37.5% in the semi-autonomous Kurdistan region. Kurdistan is notably the only region in Iraq where FGM/C is expressly criminalized.",
+                "headline_de": "Konzentriert in Kurdistan",
+                "extended_text_de": "Die nationale Pr\u00e4valenz betr\u00e4gt 7,4\u00a0%, erreicht aber 37,5\u00a0% in der halbautonomen Region Kurdistan. Kurdistan ist die einzige Region im Irak, in der FGM/C ausdr\u00fccklich kriminalisiert ist.",
+                "legal_status": "Criminalized only in Kurdistan region" },
+            "KEN": { "country": "Kenya", "scope_of_data": "National", "reported_prevalence": "15.0", "cleaned_prevalence": 15.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Strong Progress but Localized Resistance",
+                "extended_text": "Kenya\u2019s national prevalence dropped significantly to 15.0%. However, FGM/C remains near-universal among the Somali community in the North Eastern province due to social expectations.",
+                "headline_de": "Starke Fortschritte, aber lokaler Widerstand",
+                "extended_text_de": "Kenias nationale Pr\u00e4valenz ist deutlich auf 15,0\u00a0% gesunken. FGM/C bleibt jedoch unter der somalischen Gemeinschaft in der Nordostprovinz aufgrund sozialer Erwartungen nahezu universell.",
+                "legal_status": "Specific criminal provision" },
+            "KWT": { "country": "Kuwait", "scope_of_data": "Sub-national: Pregnant women in clinics", "reported_prevalence": "38.0", "cleaned_prevalence": 38.0, "source": "Chibber et al.", "year_of_source": "2011", "method_of_calculation": "Clinical examination sample used as proxy for national average",
+                "headline": "Evidence from Clinical Studies",
+                "extended_text": "National data is scarce, but a clinical study of pregnant women found a 38% prevalence. The practice was linked to adverse maternal outcomes and psychological trauma.",
+                "headline_de": "Belege aus klinischen Studien",
+                "extended_text_de": "Nationale Daten sind rar, aber eine klinische Studie an Schwangeren ergab eine Pr\u00e4valenz von 38\u00a0%. Die Praxis wurde mit sch\u00e4dlichen geburtshilflichen Ergebnissen und psychologischem Trauma in Verbindung gebracht.",
+                "legal_status": "No specific law" },
+            "LBR": { "country": "Liberia", "scope_of_data": "National", "reported_prevalence": "31.8", "cleaned_prevalence": 31.8, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Decreasing but Unregulated",
+                "extended_text": "Prevalence has dropped from 44% to 31.8%. The practice is closely tied to Sande society initiations. Liberia currently lacks a specific national law prohibiting FGM/C.",
+                "headline_de": "R\u00fcckgang, aber ungeregelt",
+                "extended_text_de": "Die Pr\u00e4valenz ist von 44\u00a0% auf 31,8\u00a0% gesunken. Die Praxis ist eng mit den Initiationen der Sande-Gesellschaft verbunden. Liberia hat derzeit kein spezifisches Gesetz, das FGM/C verbietet.",
+                "legal_status": "No specific law" },
+            "MYS": { "country": "Malaysia", "scope_of_data": "Sub-national: Ethnic Malays", "reported_prevalence": "93.0", "cleaned_prevalence": 53.0, "source": "Time is Now 2025", "year_of_source": "2024", "method_of_calculation": "Normalized: 93% weighted by Ethnic Malay population size (57% of Malaysia)",
+                "headline": "Widespread Practice Among Ethnic Malays",
+                "extended_text": "Prevalence is estimated at 53% nationally (93% among ethnic Malays). Type I/IV (\u2018sunat perempuan\u2019) is commonly performed on babies aged 1\u20132 months and is increasingly medicalized.",
+                "headline_de": "Weit verbreitet unter ethnischen Malaien",
+                "extended_text_de": "Die nationale Pr\u00e4valenz wird auf 53\u00a0% gesch\u00e4tzt (93\u00a0% unter ethnischen Malaien). Typ I/IV (\u201esunat perempuan\u201c) wird h\u00e4ufig bei S\u00e4uglingen im Alter von 1\u20132 Monaten durchgef\u00fchrt und ist zunehmend medikalisiert.",
+                "legal_status": "No specific law" },
+            "MDV": { "country": "Maldives", "scope_of_data": "National", "reported_prevalence": "12.9", "cleaned_prevalence": 12.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Type IV FGM/C Prevalent",
+                "extended_text": "Prevalence is 12.9% among women 15\u201349, but only 1% among girls 0\u201314, indicating a sharp decline. The practice mainly consists of Type IV (small cuts/pricks to the genitals).",
+                "headline_de": "FGM/C Typ IV verbreitet",
+                "extended_text_de": "Die Pr\u00e4valenz betr\u00e4gt 12,9\u00a0% bei Frauen zwischen 15\u201349 Jahren, aber nur 1\u00a0% bei M\u00e4dchen zwischen 0\u201314 Jahren \u2013 ein deutlicher R\u00fcckgang. Die Praxis besteht haupts\u00e4chlich aus Typ IV (kleine Schnitte/Einstiche).",
+                "legal_status": "No specific law" },
+            "MLI": { "country": "Mali", "scope_of_data": "National", "reported_prevalence": "88.6", "cleaned_prevalence": 88.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "High Prevalence, No Legal Framework",
+                "extended_text": "Mali has a stagnant, high prevalence of 88.6%. It remains one of the most affected countries globally with no specific law addressing FGM/C.",
+                "headline_de": "Hohe Pr\u00e4valenz, kein Rechtsrahmen",
+                "extended_text_de": "Mali hat eine stagnierende, hohe Pr\u00e4valenz von 88,6\u00a0%. Es z\u00e4hlt zu den am st\u00e4rksten betroffenen L\u00e4ndern weltweit und verf\u00fcgt \u00fcber kein spezifisches Gesetz gegen FGM/C.",
+                "legal_status": "No specific law" },
+            "MRT": { "country": "Mauritania", "scope_of_data": "National", "reported_prevalence": "63.9", "cleaned_prevalence": 63.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence at 63.9%",
+                "extended_text": "Mauritania reports a 63.9% prevalence rate. The government has enacted a specific criminal provision, though enforcement and community abandonment remain challenges.",
+                "headline_de": "Pr\u00e4valenz bei 63,9\u00a0%",
+                "extended_text_de": "Mauretanien meldet eine Pr\u00e4valenzrate von 63,9\u00a0%. Die Regierung hat eine spezifische Strafbestimmung erlassen, obwohl Durchsetzung und Aufgabe der Praxis Herausforderungen bleiben.",
+                "legal_status": "Specific criminal provision" },
+            "NER": { "country": "Niger", "scope_of_data": "National", "reported_prevalence": "2.0", "cleaned_prevalence": 2.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence Under 5%",
+                "extended_text": "Niger reports a low national prevalence of 2.0%. The practice is explicitly criminalized under national law, contributing to its near elimination.",
+                "headline_de": "Pr\u00e4valenz unter 5\u00a0%",
+                "extended_text_de": "Niger meldet eine niedrige nationale Pr\u00e4valenz von 2,0\u00a0%. Die Praxis ist nach nationalem Recht ausdr\u00fccklich kriminalisiert, was zu ihrer nahezu vollst\u00e4ndigen Eliminierung beigetragen hat.",
+                "legal_status": "Specific criminal provision" },
+            "NGA": { "country": "Nigeria", "scope_of_data": "National", "reported_prevalence": "15.1", "cleaned_prevalence": 15.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Large Burden Amidst Fragility",
+                "extended_text": "Nigeria has a prevalence of 15.1%. Due to its massive population and conflict-affected regions, it accounts for one of the largest absolute numbers of FGM/C survivors in the world.",
+                "headline_de": "Hohe Last inmitten von Fragilit\u00e4t",
+                "extended_text_de": "Nigeria hat eine Pr\u00e4valenz von 15,1\u00a0%. Aufgrund seiner riesigen Bev\u00f6lkerung und konfliktgeplagten Regionen geh\u00f6rt es zu den L\u00e4ndern mit den weltweit h\u00f6chsten absoluten Zahlen an FGM/C-\u00dcberlebenden.",
+                "legal_status": "Specific criminal provision" },
+            "OMN": { "country": "Oman", "scope_of_data": "Sub-national: Ad-Dakhiliya & Muscat", "reported_prevalence": "78.0\u201395.5", "cleaned_prevalence": 86.7, "source": "Thabet & Al-Kharousi", "year_of_source": "2018", "method_of_calculation": "Average of two regional small-scale surveys used as proxy",
+                "headline": "High Prevalence in Sampled Regions",
+                "extended_text": "Regional surveys in Ad-Dakhiliya and Muscat show 78\u201395.5% prevalence. Type I is the most common form practiced. Oman has enacted specific criminal provisions against FGM/C.",
+                "headline_de": "Hohe Pr\u00e4valenz in untersuchten Regionen",
+                "extended_text_de": "Regionale Erhebungen in Ad-Dakhiliya und Maskat zeigen eine Pr\u00e4valenz von 78\u201395,5\u00a0%. Typ I ist die am h\u00e4ufigsten praktizierte Form. Oman hat spezifische Strafbestimmungen gegen FGM/C erlassen.",
+                "legal_status": "Specific criminal provision" },
+            "RUS": { "country": "Russia", "scope_of_data": "Sub-national: Avars in Dagestan", "reported_prevalence": "25.0\u2013100.0", "cleaned_prevalence": 0.35, "source": "Antonova & Siradzhudinova", "year_of_source": "2016", "method_of_calculation": "Normalized: Regional prevalence weighted by Avar population size (~0.7% of Russia)",
+                "headline": "Practiced in Dagestan",
+                "extended_text": "FGM/C (Types I and II) is practiced by Avar and Akhvakh communities in East Dagestan, with local prevalence reaching up to 100%. An estimated 1,240 girls are at risk annually.",
+                "headline_de": "In Dagestan praktiziert",
+                "extended_text_de": "FGM/C (Typen I und II) wird von Awaren- und Akhvakh-Gemeinschaften in Ostdagestan praktiziert, mit einer lokalen Pr\u00e4valenz von bis zu 100\u00a0%. Sch\u00e4tzungsweise 1.240 M\u00e4dchen sind j\u00e4hrlich gef\u00e4hrdet.",
+                "legal_status": "No specific law" },
+            "SAU": { "country": "Saudi Arabia", "scope_of_data": "Sub-national: Jeddah & Hali regions", "reported_prevalence": "18.2\u201380.3", "cleaned_prevalence": 18.2, "source": "Rouzi et al.", "year_of_source": "2019", "method_of_calculation": "Jeddah mixed-demographic study used as a conservative proxy for national average",
+                "headline": "Medicalized FGM/C",
+                "extended_text": "Studies show localized prevalence up to 80% in regions like Hali. The practice is highly medicalized (over 90% performed by doctors) and affects both Saudi and diaspora women.",
+                "headline_de": "Medikalisiertes FGM/C",
+                "extended_text_de": "Studien zeigen eine lokale Pr\u00e4valenz von bis zu 80\u00a0% in Regionen wie Hali. Die Praxis ist stark medikalisiert (\u00fcber 90\u00a0% von \u00c4rzten durchgef\u00fchrt) und betrifft sowohl saudische als auch Diaspora-Frauen.",
+                "legal_status": "No specific law" },
+            "SEN": { "country": "Senegal", "scope_of_data": "National", "reported_prevalence": "25.2", "cleaned_prevalence": 25.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Stagnant Progress",
+                "extended_text": "Senegal has a prevalence of 25.2%. Despite having a specific criminal provision in place, progress in reducing the rate of FGM/C has stagnated in recent years.",
+                "headline_de": "Stagnierende Fortschritte",
+                "extended_text_de": "Senegal hat eine Pr\u00e4valenz von 25,2\u00a0%. Trotz einer spezifischen Strafbestimmung haben die Fortschritte bei der Senkung der FGM/C-Rate in den letzten Jahren stagniert.",
+                "legal_status": "Specific criminal provision" },
+            "SLE": { "country": "Sierra Leone", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Tied to Bondo Society",
+                "extended_text": "Sierra Leone has an 83.0% prevalence, deeply tied to secretive Bondo Society initiations. Recent high-profile deaths of girls have sparked outrage, yet no specific anti-FGM/C law exists.",
+                "headline_de": "Verbunden mit der Bondo-Gesellschaft",
+                "extended_text_de": "Sierra Leone hat eine Pr\u00e4valenz von 83,0\u00a0%, die tief mit den geheimen Initiationen der Bondo-Gesellschaft verbunden ist. J\u00fcngste aufsehenerregende Todesf\u00e4lle von M\u00e4dchen haben Emp\u00f6rung ausgel\u00f6st, doch es gibt kein spezifisches Anti-FGM/C-Gesetz.",
+                "legal_status": "No specific law" },
+            "SGP": { "country": "Singapore", "scope_of_data": "Sub-national: Muslim/Malay women", "reported_prevalence": "75.0", "cleaned_prevalence": 11.25, "source": "Time is Now 2025", "year_of_source": "2020", "method_of_calculation": "Normalized: 75% weighted by Malay/Muslim population size (~15% of Singapore)",
+                "headline": "Practiced by Malay/Muslim Community",
+                "extended_text": "While national prevalence is estimated at ~11.25%, pilot surveys indicate a 75% prevalence within the Malay/Muslim minority, mostly involving Type I/IV procedures in early childhood.",
+                "headline_de": "In der malaiischen/muslimischen Gemeinschaft praktiziert",
+                "extended_text_de": "W\u00e4hrend die nationale Pr\u00e4valenz auf ~11,25\u00a0% gesch\u00e4tzt wird, zeigen Pilotstudien eine Pr\u00e4valenz von 75\u00a0% in der malaiischen/muslimischen Minderheit, meist Typ I/IV-Eingriffe im fr\u00fchen Kindesalter.",
+                "legal_status": "No specific law" },
+            "SOM": { "country": "Somalia", "scope_of_data": "National", "reported_prevalence": "99.2", "cleaned_prevalence": 99.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Highest Prevalence Globally",
+                "extended_text": "Somalia has a near-universal prevalence of 99.2%. While the Constitution prohibits it, there is no national legislation, though the Galmudug state passed a specific ban in 2024.",
+                "headline_de": "H\u00f6chste Pr\u00e4valenz weltweit",
+                "extended_text_de": "Somalia hat eine nahezu universelle Pr\u00e4valenz von 99,2\u00a0%. Obwohl die Verfassung FGM/C verbietet, gibt es keine nationale Gesetzgebung \u2013 der Staat Galmudug verabschiedete 2024 jedoch ein spezifisches Verbot.",
+                "legal_status": "No national legislation (Constitutional ban only)" },
+            "SDN": { "country": "Sudan", "scope_of_data": "National", "reported_prevalence": "86.6", "cleaned_prevalence": 86.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Severe Forms and Recent Legal Action",
+                "extended_text": "Sudan has an 86.6% prevalence, with Type III (infibulation) being highly common. In July 2020, Sudan amended its Criminal Code to explicitly criminalize the practice.",
+                "headline_de": "Schwere Formen und j\u00fcngste Gesetzgebung",
+                "extended_text_de": "Sudan hat eine Pr\u00e4valenz von 86,6\u00a0%, wobei Typ III (Infibulation) sehr verbreitet ist. Im Juli 2020 \u00e4nderte Sudan seinen Strafgesetzbuch, um die Praxis ausdr\u00fccklich zu kriminalisieren.",
+                "legal_status": "Specific criminal provision (2020)" },
+            "TZA": { "country": "Tanzania", "scope_of_data": "National", "reported_prevalence": "8.2", "cleaned_prevalence": 8.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence Below 10%",
+                "extended_text": "Tanzania reports an 8.2% prevalence. The country has a specific criminal provision prohibiting FGM/C and has made steady progress toward abandonment.",
+                "headline_de": "Pr\u00e4valenz unter 10\u00a0%",
+                "extended_text_de": "Tansania meldet eine Pr\u00e4valenz von 8,2\u00a0%. Das Land verf\u00fcgt \u00fcber eine spezifische Strafbestimmung, die FGM/C verbietet, und hat stetige Fortschritte beim Verzicht erzielt.",
+                "legal_status": "Specific criminal provision" },
+            "TGO": { "country": "Togo", "scope_of_data": "National", "reported_prevalence": "3.1", "cleaned_prevalence": 3.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Approaching Elimination",
+                "extended_text": "Togo has a very low national prevalence of 3.1%. The government enforces a specific criminal provision against the practice.",
+                "headline_de": "Auf dem Weg zur Eliminierung",
+                "extended_text_de": "Togo hat eine sehr niedrige nationale Pr\u00e4valenz von 3,1\u00a0%. Die Regierung setzt eine spezifische Strafbestimmung gegen die Praxis durch.",
+                "legal_status": "Specific criminal provision" },
+            "UGA": { "country": "Uganda", "scope_of_data": "National", "reported_prevalence": "0.3", "cleaned_prevalence": 0.3, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Near Elimination",
+                "extended_text": "Uganda has nearly eliminated the practice with a prevalence of just 0.3%, supported by robust specific national legislation against FGM/C.",
+                "headline_de": "Nahezu eliminiert",
+                "extended_text_de": "Uganda hat die Praxis mit einer Pr\u00e4valenz von nur 0,3\u00a0% nahezu eliminiert, unterst\u00fctzt durch robuste spezifische nationale Gesetzgebung gegen FGM/C.",
+                "legal_status": "Specific criminal provision" },
+            "ARE": { "country": "United Arab Emirates", "scope_of_data": "Sub-national: Sampled populations", "reported_prevalence": "34.0\u201341.4", "cleaned_prevalence": 37.7, "source": "Awar & Al-Jefout et al.", "year_of_source": "2020", "method_of_calculation": "Average of two small-scale surveys used as proxy",
+                "headline": "FGM/C in the UAE",
+                "extended_text": "Small-scale studies indicate a 34\u201341% prevalence in the United Arab Emirates, mainly Type I. Currently, there is no specific anti-FGM/C legislation in place.",
+                "headline_de": "FGM/C in den Vereinigten Arabischen Emiraten",
+                "extended_text_de": "Kleinere Studien weisen auf eine Pr\u00e4valenz von 34\u201341\u00a0% in den Vereinigten Arabischen Emiraten hin, haupts\u00e4chlich Typ I. Es gibt derzeit keine spezifische Anti-FGM/C-Gesetzgebung.",
+                "legal_status": "No specific law" },
+            "YEM": { "country": "Yemen", "scope_of_data": "National", "reported_prevalence": "18.5", "cleaned_prevalence": 18.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)",
+                "headline": "Prevalence at 18.5%",
+                "extended_text": "Yemen reports an 18.5% prevalence, with Type II FGM/C being most commonly practiced. There is currently no specific law addressing the practice.",
+                "headline_de": "Pr\u00e4valenz bei 18,5\u00a0%",
+                "extended_text_de": "Jemen meldet eine Pr\u00e4valenz von 18,5\u00a0%, wobei FGM/C Typ II am h\u00e4ufigsten praktiziert wird. Es gibt derzeit kein spezifisches Gesetz, das die Praxis regelt.",
+                "legal_status": "No specific law" },
+            "ZMB": { "country": "Zambia", "scope_of_data": "National", "reported_prevalence": "0.7", "cleaned_prevalence": 0.7, "source": "Zambia Sexual Behaviour Survey (ZSBS)", "year_of_source": "2009", "method_of_calculation": "Random sampling of 2500 households",
+                "headline": "Low National Prevalence",
+                "extended_text": "Zambia has a prevalence of 0.7%, with some evidence pointing to practices like labia pulling among diaspora communities. The country has enacted a specific criminal provision.",
+                "headline_de": "Niedrige nationale Pr\u00e4valenz",
+                "extended_text_de": "Sambia hat eine Pr\u00e4valenz von 0,7\u00a0%, mit einigen Hinweisen auf Praktiken wie das Ziehen der Schamlippen in Diaspora-Gemeinschaften. Das Land hat eine spezifische Strafbestimmung erlassen.",
+                "legal_status": "Specific criminal provision" }
         };
 
         // ── 2. COMPUTED STATS ────────────────────────────────────────────────────
         const allEntries = Object.values(fgmcData);
         const withLaw = allEntries.filter(d => d.legal_status.toLowerCase().startsWith('specific criminal')).length;
 
-        document.getElementById('stats-strip').innerHTML = `
-            <div class="stat-item">
-                <div class="stat-value">${allEntries.length}</div>
-                <div class="stat-label">Countries tracked</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${withLaw}</div>
-                <div class="stat-label">With criminal law</div>
-            </div>
-        `;
+        function renderStats() {
+            document.getElementById('stats-strip').innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${allEntries.length}</div>
+                    <div class="stat-label">${t('countriesTracked')}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${withLaw}</div>
+                    <div class="stat-label">${t('withCriminalLaw')}</div>
+                </div>
+            `;
+        }
+        renderStats();
 
         // ── 3. MAP INIT ──────────────────────────────────────────────────────────
         const map = L.map('map', { zoomControl: false }).setView([15, 20], 3);
@@ -587,8 +874,8 @@
 
         function getLegalBadge(status) {
             const s = status.toLowerCase();
-            if (s.startsWith('specific criminal')) return { cls: 'legal-yes',     label: '✓ ' + status };
-            if (s.startsWith('no specific') || s.startsWith('no national')) return { cls: 'legal-no', label: '✗ ' + status };
+            if (s.startsWith('specific criminal')) return { cls: 'legal-yes',     label: '\u2713 ' + status };
+            if (s.startsWith('no specific') || s.startsWith('no national')) return { cls: 'legal-no', label: '\u2717 ' + status };
             return { cls: 'legal-partial', label: '~ ' + status };
         }
 
@@ -635,25 +922,29 @@
             if (geojsonLayer) geojsonLayer.setStyle(styleMap);
         }
 
-        // ── 9. MODAL ─────────────────────────────────────────────────────────────
+        // ── 10. MODAL ────────────────────────────────────────────────────────────
         const modalBackdrop = document.getElementById('modal-backdrop');
+        let currentModalData = null;
 
         function openModal(data) {
+            currentModalData = data;
+            renderModal(data);
+            modalBackdrop.style.display = 'flex';
+        }
+
+        function renderModal(data) {
             document.getElementById('modal-title').textContent    = data.country;
-            document.getElementById('modal-headline').textContent = data.headline;
-            document.getElementById('modal-extended').textContent = data.extended_text;
-            document.getElementById('modal-source').textContent  = data.source;
-            document.getElementById('modal-year').textContent    = data.year_of_source;
-            document.getElementById('modal-method').textContent  = data.method_of_calculation;
+            document.getElementById('modal-headline').textContent = currentLang === 'de' ? data.headline_de : data.headline;
+            document.getElementById('modal-extended').textContent = currentLang === 'de' ? data.extended_text_de : data.extended_text;
 
             // Prevalence badges — show both figures for sub-national countries
             const sub = isSubnational(data);
             let badges = '';
             if (sub) {
-                badges += `<span class="data-badge badge-national">National est.: ${data.cleaned_prevalence}%</span>`;
-                badges += `<span class="data-badge badge-community">Community: ${data.reported_prevalence}%</span>`;
+                badges += `<span class="data-badge badge-national">${t('nationalEst')}: ${data.cleaned_prevalence}%</span>`;
+                badges += `<span class="data-badge badge-community">${t('community')}: ${data.reported_prevalence}%</span>`;
             } else {
-                badges += `<span class="data-badge badge-national">Prevalence: ${data.reported_prevalence}%</span>`;
+                badges += `<span class="data-badge badge-national">${t('prevalence')}: ${data.reported_prevalence}%</span>`;
             }
             badges += `<span class="data-badge badge-scope">${data.scope_of_data}</span>`;
             document.getElementById('modal-badges').innerHTML = badges;
@@ -663,13 +954,19 @@
             document.getElementById('modal-legal-badge').innerHTML =
                 `<span class="legal-badge ${badge.cls}">${badge.label}</span>`;
 
-            modalBackdrop.style.display = 'flex';
+            // Meta section
+            document.getElementById('modal-meta').innerHTML =
+                `<strong>${t('sourceLabel')}:</strong> ${data.source} (${data.year_of_source})<br>` +
+                `<strong>${t('methodLabel')}:</strong> ${data.method_of_calculation}`;
+
+            // Nav hint
+            document.querySelector('.modal-nav-hint').textContent = t('navHint');
         }
 
         function closeModal() {
             modalBackdrop.style.display = 'none';
+            currentModalData = null;
             if (currentIndex >= 0 && geojsonLayer) {
-                // Re-apply styleMap so the revealed colour stays but the highlight border drops
                 const layer = countryLayers[sortedKeys[currentIndex]];
                 if (layer) geojsonLayer.resetStyle(layer);
             }
@@ -679,7 +976,7 @@
 
         modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
 
-        // ── 9. KEYBOARD NAVIGATION ───────────────────────────────────────────────
+        // ── 11. KEYBOARD NAVIGATION ──────────────────────────────────────────────
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') { closeModal(); closeSources(); return; }
             if (e.key === 's' || e.key === 'S') { openSources(); return; }
@@ -714,8 +1011,17 @@
             openModal(data);
         }
 
-        // ── 10. GEOJSON LOAD & RENDER ────────────────────────────────────────────
+        // ── 12. GEOJSON LOAD & RENDER ────────────────────────────────────────────
         let geojsonLayer;
+
+        function buildTooltip(data) {
+            const sub = isSubnational(data);
+            const prevLine = sub
+                ? `${t('nationalEst')}: ${data.cleaned_prevalence}%`
+                : `${t('prevalence')}: ${data.reported_prevalence}%`;
+            const subNote = sub ? `<br><em style="opacity:0.65;font-size:11px">${t('tooltipSub')}</em>` : '';
+            return `<b>${data.country}</b><br>${prevLine}${subNote}`;
+        }
 
         fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
             .then(r => r.json())
@@ -730,16 +1036,7 @@
 
                         countryLayers[iso] = layer;
 
-                        const sub     = isSubnational(data);
-                        const prevLine = sub
-                            ? `National est.: ${data.cleaned_prevalence}%`
-                            : `Prevalence: ${data.reported_prevalence}%`;
-                        const subNote  = sub ? `<br><em style="opacity:0.65;font-size:11px">Sub-national data</em>` : '';
-
-                        layer.bindTooltip(
-                            `<b>${data.country}</b><br>${prevLine}${subNote}`,
-                            { className: 'custom-tooltip', sticky: true }
-                        );
+                        layer.bindTooltip(buildTooltip(data), { className: 'custom-tooltip', sticky: true });
 
                         layer.on({
                             mouseover: function(e) {
@@ -773,25 +1070,58 @@
             })
             .catch(() => {
                 document.getElementById('loading').innerHTML =
-                    '<div style="color:#ff7070;font-size:15px;text-align:center;padding:20px">Failed to load map shapes.<br>Check your internet connection.</div>';
+                    `<div style="color:#ff7070;font-size:15px;text-align:center;padding:20px">${t('loadError')}</div>`;
             });
 
-        // ── 11. LEGEND ───────────────────────────────────────────────────────────
+        // ── 13. LEGEND ───────────────────────────────────────────────────────────
         const legend = L.control({ position: 'bottomright' });
         legend.onAdd = function() {
             const div    = L.DomUtil.create('div', 'info legend');
             const grades = [0, 10, 25, 50, 80];
-            div.innerHTML = '<h4>Prevalence (%)</h4>';
+            div.innerHTML = `<h4>${t('legendTitle')}</h4>`;
             for (let i = 0; i < grades.length; i++) {
                 div.innerHTML +=
                     '<i style="background:' + getColor(grades[i] + 1) + '"></i>' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+<br>');
             }
-            div.innerHTML += '<i style="background:#dcdcdc; border:1px solid #ccc;"></i>No data';
-            div.innerHTML += '<hr class="legend-divider"><div class="legend-subnational"><span class="legend-dash-swatch"></span>Sub-national data</div>';
+            div.innerHTML += `<i style="background:#dcdcdc; border:1px solid #ccc;"></i>${t('legendNoData')}`;
+            div.innerHTML += `<hr class="legend-divider"><div class="legend-subnational"><span class="legend-dash-swatch"></span>${t('legendSub')}</div>`;
             return div;
         };
         legend.addTo(map);
+
+        // ── 14. LANGUAGE SWITCH ───────────────────────────────────────────────────
+        function switchLanguage() {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            document.documentElement.lang = currentLang;
+            document.getElementById('lang-btn').textContent = currentLang === 'en' ? 'DE' : 'EN';
+
+            // Update all data-i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+
+            // Re-render stats strip
+            renderStats();
+
+            // Re-render legend
+            legend.remove();
+            legend.addTo(map);
+
+            // Rebind tooltips with new language
+            Object.entries(countryLayers).forEach(([iso, layer]) => {
+                layer.bindTooltip(buildTooltip(fgmcData[iso]), { className: 'custom-tooltip', sticky: true });
+            });
+
+            // Re-render modal if open
+            if (modalBackdrop.style.display === 'flex' && currentModalData) {
+                renderModal(currentModalData);
+            }
+        }
 
     </script>
 </body>
