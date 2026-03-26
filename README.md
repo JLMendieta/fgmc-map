@@ -2,8 +2,7 @@
 
 An interactive choropleth map visualising the prevalence of Female Genital Mutilation/Cutting (FGM/C) across countries worldwide. Built as a single self-contained HTML file — no server, no build step, no dependencies to install.
 
-**Live map:** [https://username.github.io/fgmc-map](https://username.github.io/fgmc-map)
-*(replace with your actual GitHub Pages URL once deployed)*
+**Live map:** [https://JLMendieta.github.io/fgmc-map](https://JLMendieta.github.io/fgmc-map)
 
 ---
 
