@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global FGM/C Prevalence</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial, sans-serif; }
+
+        /* ── Top bar ── */
+        #top-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 50px;
+            background: rgba(18, 18, 36, 0.93);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            z-index: 1000;
+            color: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        }
+
+        #top-bar h1 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        #top-bar .source-line {
+            font-size: 10px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 2px;
+        }
+
+        #top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        #stats-strip {
+            display: flex;
+            gap: 28px;
+        }
+
+        .ctrl-btn {
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            font-size: 12px;
+            font-family: inherit;
+            padding: 5px 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        #reveal-all-btn {
+            background: rgba(40,167,69,0.25);
+            border-color: rgba(40,167,69,0.5);
+        }
+        #reveal-all-btn:hover {
+            background: rgba(40,167,69,0.45);
+            border-color: rgba(40,167,69,0.8);
+        }
+
+        #reset-btn {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        #reset-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        #sources-btn {
+            background: rgba(100,149,237,0.2);
+            border-color: rgba(100,149,237,0.45);
+        }
+        #sources-btn:hover {
+            background: rgba(100,149,237,0.38);
+            border-color: rgba(100,149,237,0.7);
+        }
+
+        /* ── Copyright bar ── */
+        #copyright {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 22px;
+            background: rgba(18,18,36,0.82);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: rgba(255,255,255,0.45);
+            z-index: 1000;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Sources modal ── */
+        #sources-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 2100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        #sources-modal {
+            background: white;
+            width: 90%;
+            max-width: 660px;
+            max-height: 82vh;
+            border-radius: 14px;
+            padding: 28px 30px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            position: relative;
+            overflow-y: auto;
+            animation: slideIn 0.22s ease-out;
+        }
+
+        #sources-modal h2 {
+            margin: 0 0 18px 0;
+            font-size: 20px;
+            color: #12122e;
+        }
+
+        .source-block {
+            margin-bottom: 22px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .source-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .source-block h3 {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            color: #12122e;
+        }
+
+        .source-block .short-label {
+            display: inline-block;
+            background: #eef5fb;
+            color: #2471a3;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .source-block .full-citation {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        .source-block .method-note {
+            font-size: 12px;
+            color: #888;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .stat-item { text-align: center; }
+
+        .stat-value {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ff7070;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-top: 2px;
+        }
+
+        /* ── Map ── */
+        #map {
+            position: fixed;
+            top: 50px; left: 0; right: 0; bottom: 0;
+            background: #cde4ef;
+        }
+
+        /* ── Loading overlay ── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 18, 36, 0.88);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            color: white;
+        }
+
+        .spinner {
+            width: 46px; height: 46px;
+            border: 4px solid rgba(255,255,255,0.15);
+            border-top-color: #ff7070;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            margin-bottom: 14px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Legend ── */
+        .info.legend {
+            background: rgba(255,255,255,0.96);
+            padding: 12px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.18);
+            line-height: 22px;
+            color: #333;
+            font-size: 12px;
+            min-width: 130px;
+        }
+
+        .info.legend h4 {
+            margin: 0 0 6px 0;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #777;
+        }
+
+        .info.legend i {
+            width: 15px; height: 15px;
+            float: left;
+            margin-right: 8px;
+            border-radius: 2px;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .legend-divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 7px 0;
+        }
+
+        .legend-subnational {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            color: #888;
+        }
+
+        .legend-dash-swatch {
+            width: 15px; height: 15px;
+            flex-shrink: 0;
+            margin-right: 8px;
+            border-radius: 2px;
+            background: repeating-linear-gradient(
+                45deg,
+                #bbb 0px, #bbb 2px,
+                transparent 2px, transparent 5px
+            );
+            border: 1px solid #bbb;
+        }
+
+        /* ── Keyboard hint ── */
+        #keyboard-hint {
+            position: fixed;
+            bottom: 14px;
+            left: 14px;
+            background: rgba(18,18,36,0.72);
+            color: rgba(255,255,255,0.65);
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+        }
+
+        /* ── Tooltip ── */
+        .leaflet-tooltip.custom-tooltip {
+            background: rgba(18,18,36,0.9);
+            border: none;
+            color: white;
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        /* ── Modal ── */
+        #modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        #modal {
+            background: white;
+            width: 90%;
+            max-width: 580px;
+            border-radius: 14px;
+            padding: 28px 30px 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            position: relative;
+            animation: slideIn 0.22s ease-out;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-14px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 14px; right: 18px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #bbb;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+        .close-btn:hover { color: #d9534f; }
+
+        #modal-title { margin: 0 0 3px 0; color: #12122e; font-size: 26px; }
+        #modal-headline { color: #d9534f; font-weight: 600; font-size: 14px; margin-bottom: 14px; }
+
+        .badge-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+
+        .data-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .badge-national  { background: #fdf0f0; color: #c0392b; }
+        .badge-community { background: #fffbee; color: #856404; }
+        .badge-scope     { background: #eef5fb; color: #2471a3; }
+
+        #modal-legal-badge { margin-bottom: 14px; }
+
+        .legal-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .legal-yes     { background: #d4edda; color: #155724; }
+        .legal-no      { background: #f8d7da; color: #721c24; }
+        .legal-partial { background: #fff3cd; color: #856404; }
+
+        .modal-text {
+            font-size: 15px;
+            line-height: 1.65;
+            color: #444;
+            margin-bottom: 16px;
+        }
+
+        .modal-meta {
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 13px;
+            line-height: 1.8;
+        }
+        .modal-meta strong { color: #666; }
+
+        .modal-nav-hint {
+            text-align: center;
+            font-size: 11px;
+            color: #ccc;
+            margin-top: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top bar -->
+    <div id="top-bar">
+        <div>
+            <h1>Global FGM/C Prevalence</h1>
+            <div class="source-line">Sources: UNICEF Global Database 2024 &nbsp;·&nbsp; Equality Now 2025 &nbsp;·&nbsp; Primary field studies</div>
+        </div>
+        <div id="top-bar-right">
+            <div id="stats-strip"><!-- populated by JS --></div>
+            <button id="reveal-all-btn" class="ctrl-btn" onclick="revealAll()">&#9675; Reveal All</button>
+            <button id="reset-btn"      class="ctrl-btn" onclick="resetColors()">&#8635; Reset</button>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <div style="font-size:14px; opacity:0.75;">Loading map data&hellip;</div>
+    </div>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Keyboard hint -->
+    <div id="keyboard-hint">&#8592; &#8594; &nbsp;Navigate countries &nbsp;&nbsp;·&nbsp;&nbsp; Esc &nbsp;Close &nbsp;&nbsp;·&nbsp;&nbsp; S &nbsp;Sources</div>
+
+    <!-- Copyright -->
+    <div id="copyright">&copy; 2026 J.L. Mendieta &nbsp;&middot;&nbsp; All rights reserved</div>
+
+    <!-- Sources modal -->
+    <div id="sources-backdrop" onclick="if(event.target===this)closeSources()">
+        <div id="sources-modal">
+            <span class="close-btn" onclick="closeSources()">&times;</span>
+            <h2>Data Sources</h2>
+
+            <div class="source-block">
+                <h3>UNICEF (2024) &ndash; Global Update</h3>
+                <span class="short-label">UNICEF 2024</span>
+                <p class="full-citation">UNICEF. 2024. <em>Female Genital Mutilation: A Global Concern &ndash; 2024 Update.</em> New York: UNICEF.</p>
+                <p class="method-note">Nationally representative DHS/MICS household survey; prevalence among women 15&ndash;49 (and girls where available).</p>
+            </div>
+
+            <div class="source-block">
+                <h3>UNICEF / UNFPA &ndash; Country Profiles and Snapshots</h3>
+                <span class="short-label">UNICEF Country Profile &nbsp;/&nbsp; UNFPA Snapshot</span>
+                <p class="full-citation">UNICEF. Various years. <em>Female Genital Mutilation/Cutting Country Profiles</em> (DHS/MICS-based country briefs). New York: UNICEF.<br>
+                UNFPA. 2023&ndash;2024. <em>FGM Country Snapshot: [Country name].</em> New York: UNFPA.</p>
+                <p class="method-note">Latest available DHS/MICS or equivalent national survey; directly reported prevalence.</p>
+            </div>
+
+            <div class="source-block">
+                <h3>Farouki et al. (2022) &ndash; Meta-analysis</h3>
+                <span class="short-label">Farouki et al. 2022</span>
+                <p class="full-citation">Farouki, L. et al. 2022. &ldquo;The Global Prevalence of Female Genital Mutilation/Cutting: A Systematic Review and Meta-analysis.&rdquo; <em>PLOS Medicine</em> 19(8): e1004061.</p>
+                <p class="method-note">Pooled estimate from systematic review and meta-analysis (GLMM/random-effects) based on multiple surveys.</p>
+            </div>
+
+            <div class="source-block">
+                <h3>End FGM European Network, Equality Now &amp; US End FGM/C Network (2025)</h3>
+                <span class="short-label">Time is Now 2025</span>
+                <p class="full-citation">End FGM European Network, Equality Now &amp; US End FGM/C Network. 2025. <em>The Time is Now: End Female Genital Mutilation/Cutting (FGM/C): An Urgent Need for Global Response.</em> Brussels / London / Washington DC.</p>
+                <p class="method-note">Where only presence is known: documented presence from case reports, legal/NGO, or small studies; no nationally representative prevalence. Where numeric prevalence is quoted (e.g. Malaysia, Indonesia): estimate from non-national or mixed study sources as compiled in this advocacy report.</p>
+            </div>
+
+            <div class="source-block">
+                <h3>Equality Now &amp; End FGM European Network (2020)</h3>
+                <span class="short-label">Call for Global Response 2020</span>
+                <p class="full-citation">Equality Now &amp; End FGM European Network. 2020. <em>Female Genital Mutilation/Cutting: A Call for a Global Response.</em> London / Brussels.</p>
+                <p class="method-note">Compilation from existing surveys and secondary sources; used to identify affected countries rather than as a primary numeric source.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-backdrop">
+        <div id="modal">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-headline"></div>
+            <div class="badge-row" id="modal-badges"></div>
+            <div id="modal-legal-badge"></div>
+            <div class="modal-text" id="modal-extended"></div>
+            <div class="modal-meta">
+                <strong>Source:</strong> <span id="modal-source"></span> (<span id="modal-year"></span>)<br>
+                <strong>Methodology:</strong> <span id="modal-method"></span>
+            </div>
+            <div class="modal-nav-hint">Use &larr; &rarr; arrow keys to navigate between countries</div>
+        </div>
+    </div>
+
+    <script>
+        // ── 1. DATA ──────────────────────────────────────────────────────────────
+        const fgmcData = {
+            "BEN": { "country": "Benin", "scope_of_data": "National", "reported_prevalence": "9.2", "cleaned_prevalence": 9.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence in Single Digits", "extended_text": "Benin has a national prevalence of 9.2%. The country has enacted specific criminal provisions against FGM/C, which has contributed to a downward trend in the practice over recent decades.", "legal_status": "Specific criminal provision" },
+            "BFA": { "country": "Burkina Faso", "scope_of_data": "National", "reported_prevalence": "56.1", "cleaned_prevalence": 56.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Significant Progress Over Time", "extended_text": "Burkina Faso has demonstrated strong progress, with FGM/C prevalence dropping from 75% to 56.1%. The country has robust specific national anti-FGM/C laws in place.", "legal_status": "Specific criminal provision" },
+            "CMR": { "country": "Cameroon", "scope_of_data": "National", "reported_prevalence": "1.4", "cleaned_prevalence": 1.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Low National Prevalence", "extended_text": "Cameroon reports a low national prevalence of 1.4%. The government has enacted specific criminal provisions to prohibit the practice.", "legal_status": "Specific criminal provision" },
+            "CAF": { "country": "Central African Republic", "scope_of_data": "National", "reported_prevalence": "21.6", "cleaned_prevalence": 21.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "One in Five Women Affected", "extended_text": "With a national prevalence of 21.6%, the Central African Republic continues to tackle FGM/C. The practice is specifically prohibited under national law.", "legal_status": "Specific criminal provision" },
+            "TCD": { "country": "Chad", "scope_of_data": "National", "reported_prevalence": "34.1", "cleaned_prevalence": 34.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Exceeds One-Third", "extended_text": "Chad has a prevalence of 34.1%. Though FGM/C was outlawed by a 2002 Reproductive Health Law, the implementation decree required to bring the law into force only became effective in 2020.", "legal_status": "Specific criminal provision (2020 decree)" },
+            "COL": { "country": "Colombia", "scope_of_data": "Sub-national: Emberá community", "reported_prevalence": "66.7", "cleaned_prevalence": 0.32, "source": "Colombian National Indigenous Organization (ONIC)", "year_of_source": "2012", "method_of_calculation": "Normalized: 66.7% weighted by Emberá population size (~0.48% of Colombia)", "headline": "Concentrated in Indigenous Communities", "extended_text": "While national prevalence is estimated at ~0.32%, Type I FGM/C (clitoridectomy) reaches 66.7% within the Emberá indigenous community. The procedure is typically performed on newborn babies.", "legal_status": "No specific law (Bills pending in Congress as of 2024)" },
+            "CIV": { "country": "Côte d'Ivoire", "scope_of_data": "National", "reported_prevalence": "36.7", "cleaned_prevalence": 36.7, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Above 30%", "extended_text": "Côte d'Ivoire has a national prevalence of 36.7%. The country has specifically criminalized FGM/C under its national legal framework.", "legal_status": "Specific criminal provision" },
+            "DJI": { "country": "Djibouti", "scope_of_data": "National", "reported_prevalence": "90.1", "cleaned_prevalence": 90.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Near-Universal Prevalence", "extended_text": "FGM/C remains highly prevalent at 90.1% in Djibouti, affecting the vast majority of women and girls despite specific legal prohibitions being in place.", "legal_status": "Specific criminal provision" },
+            "EGY": { "country": "Egypt", "scope_of_data": "National", "reported_prevalence": "87.2", "cleaned_prevalence": 87.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Medicalization Rates", "extended_text": "Egypt has a prevalence of 87.2%. Despite strict legal bans, the country sees very high rates of medicalized FGM/C, with the vast majority of procedures performed by doctors and healthcare professionals.", "legal_status": "Specific criminal provision" },
+            "ERI": { "country": "Eritrea", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Prevalence at 83%", "extended_text": "Eritrea maintains a high FGM/C prevalence of 83.0%. The practice continues broadly despite being expressly criminalized by the government.", "legal_status": "Specific criminal provision" },
+            "ETH": { "country": "Ethiopia", "scope_of_data": "National", "reported_prevalence": "65.2", "cleaned_prevalence": 65.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Complex Dynamics and Conflict", "extended_text": "Ethiopia's prevalence is 65.2%. Progress is challenged by institutional fragility, conflict, and a 2024 fatwa from the Islamic Affairs Supreme Council that supported medicalized FGM/C.", "legal_status": "Specific criminal provision" },
+            "GMB": { "country": "Gambia", "scope_of_data": "National", "reported_prevalence": "72.6", "cleaned_prevalence": 72.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Recent Pushback Against Laws", "extended_text": "Prevalence remains stagnant at 72.6%. In 2024, The Gambia faced a major legislative attempt to repeal its 2015 Women's Amendment Act banning FGM/C, which was successfully defeated by activists.", "legal_status": "Specific criminal provision" },
+            "GHA": { "country": "Ghana", "scope_of_data": "National", "reported_prevalence": "2.4", "cleaned_prevalence": 2.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Approaching Elimination", "extended_text": "Ghana reports a very low national prevalence of 2.4%, supported by specific national legislation aiming to eradicate the practice entirely.", "legal_status": "Specific criminal provision" },
+            "GIN": { "country": "Guinea", "scope_of_data": "National", "reported_prevalence": "94.5", "cleaned_prevalence": 94.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Almost Universal Practice", "extended_text": "Guinea has one of the highest prevalence rates globally at 94.5%. The practice remains deeply entrenched in social norms despite specific national anti-FGM/C laws.", "legal_status": "Specific criminal provision" },
+            "GNB": { "country": "Guinea-Bissau", "scope_of_data": "National", "reported_prevalence": "52.1", "cleaned_prevalence": 52.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Over 50%", "extended_text": "Guinea-Bissau reports a 52.1% prevalence. While FGM/C is specifically outlawed, progress in reducing the rate has largely stagnated in recent years.", "legal_status": "Specific criminal provision" },
+            "IND": { "country": "India", "scope_of_data": "Sub-national: Bohra community", "reported_prevalence": "75.0", "cleaned_prevalence": 0.05, "source": "Anantnarayan, Diler & Menon", "year_of_source": "2018", "method_of_calculation": "Normalized: 75% weighted by Bohra population size (~0.07% of India)", "headline": "Practiced by the Bohra Community", "extended_text": "National prevalence is statistically tiny (~0.05%), but surveys show 75% prevalence within the Dawoodi Bohra community, who practice Type I FGM/C locally known as 'Khatna' or 'Khafz'.", "legal_status": "No specific law" },
+            "IDN": { "country": "Indonesia", "scope_of_data": "National (Girls 0–11)", "reported_prevalence": "51.2", "cleaned_prevalence": 51.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (measured specifically among girls aged 0–11)", "headline": "Medicalized Practice Among Girls", "extended_text": "A 51.2% prevalence is reported among girls aged 0–11. The practice (Type I/IV) is highly medicalized and often provided as part of a child delivery package in hospitals.", "legal_status": "Prohibited for infants/toddlers (Gov. Regulation No.28/2024)" },
+            "IRN": { "country": "Iran", "scope_of_data": "Sub-national: Western/Southern provinces", "reported_prevalence": "16.0–60.0", "cleaned_prevalence": 3.8, "source": "Ahmady", "year_of_source": "2015", "method_of_calculation": "Normalized: Regional prevalence weighted by estimated minority population (~10% of Iran)", "headline": "Regional and Minority Focus", "extended_text": "National estimates range from ~1.6–6.0%, but prevalence reaches 16–60% in specific Western and Southern provinces among Kurdish and Sunni minorities. Type I is most common.", "legal_status": "Art. 663 of Penal Code imposes fine" },
+            "IRQ": { "country": "Iraq", "scope_of_data": "National", "reported_prevalence": "7.4", "cleaned_prevalence": 7.4, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Concentrated in Kurdistan", "extended_text": "National prevalence is 7.4%, but reaches 37.5% in the semi-autonomous Kurdistan region. Kurdistan is notably the only region in Iraq where FGM/C is expressly criminalized.", "legal_status": "Criminalized only in Kurdistan region" },
+            "KEN": { "country": "Kenya", "scope_of_data": "National", "reported_prevalence": "15.0", "cleaned_prevalence": 15.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Strong Progress but Localized Resistance", "extended_text": "Kenya's national prevalence dropped significantly to 15.0%. However, FGM/C remains near-universal among the Somali community in the North Eastern province due to social expectations.", "legal_status": "Specific criminal provision" },
+            "KWT": { "country": "Kuwait", "scope_of_data": "Sub-national: Pregnant women in clinics", "reported_prevalence": "38.0", "cleaned_prevalence": 38.0, "source": "Chibber et al.", "year_of_source": "2011", "method_of_calculation": "Clinical examination sample used as proxy for national average", "headline": "Evidence from Clinical Studies", "extended_text": "National data is scarce, but a clinical study of pregnant women found a 38% prevalence. The practice was linked to adverse maternal outcomes and psychological trauma.", "legal_status": "No specific law" },
+            "LBR": { "country": "Liberia", "scope_of_data": "National", "reported_prevalence": "31.8", "cleaned_prevalence": 31.8, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Decreasing but Unregulated", "extended_text": "Prevalence has dropped from 44% to 31.8%. The practice is closely tied to Sande society initiations. Liberia currently lacks a specific national law prohibiting FGM/C.", "legal_status": "No specific law" },
+            "MYS": { "country": "Malaysia", "scope_of_data": "Sub-national: Ethnic Malays", "reported_prevalence": "93.0", "cleaned_prevalence": 53.0, "source": "Time is Now 2025", "year_of_source": "2024", "method_of_calculation": "Normalized: 93% weighted by Ethnic Malay population size (57% of Malaysia)", "headline": "Widespread Practice Among Ethnic Malays", "extended_text": "Prevalence is estimated at 53% nationally (93% among ethnic Malays). Type I/IV ('sunat perempuan') is commonly performed on babies aged 1–2 months and is increasingly medicalized.", "legal_status": "No specific law" },
+            "MDV": { "country": "Maldives", "scope_of_data": "National", "reported_prevalence": "12.9", "cleaned_prevalence": 12.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Type IV FGM/C Prevalent", "extended_text": "Prevalence is 12.9% among women 15–49, but only 1% among girls 0–14, indicating a sharp decline. The practice mainly consists of Type IV (small cuts/pricks to the genitals).", "legal_status": "No specific law" },
+            "MLI": { "country": "Mali", "scope_of_data": "National", "reported_prevalence": "88.6", "cleaned_prevalence": 88.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "High Prevalence, No Legal Framework", "extended_text": "Mali has a stagnant, high prevalence of 88.6%. It remains one of the most affected countries globally with no specific law addressing FGM/C.", "legal_status": "No specific law" },
+            "MRT": { "country": "Mauritania", "scope_of_data": "National", "reported_prevalence": "63.9", "cleaned_prevalence": 63.9, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence at 63.9%", "extended_text": "Mauritania reports a 63.9% prevalence rate. The government has enacted a specific criminal provision, though enforcement and community abandonment remain challenges.", "legal_status": "Specific criminal provision" },
+            "NER": { "country": "Niger", "scope_of_data": "National", "reported_prevalence": "2.0", "cleaned_prevalence": 2.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Under 5%", "extended_text": "Niger reports a low national prevalence of 2.0%. The practice is explicitly criminalized under national law, contributing to its near elimination.", "legal_status": "Specific criminal provision" },
+            "NGA": { "country": "Nigeria", "scope_of_data": "National", "reported_prevalence": "15.1", "cleaned_prevalence": 15.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Large Burden Amidst Fragility", "extended_text": "Nigeria has a prevalence of 15.1%. Due to its massive population and conflict-affected regions, it accounts for one of the largest absolute numbers of FGM/C survivors in the world.", "legal_status": "Specific criminal provision" },
+            "OMN": { "country": "Oman", "scope_of_data": "Sub-national: Ad-Dakhiliya & Muscat", "reported_prevalence": "78.0–95.5", "cleaned_prevalence": 86.7, "source": "Thabet & Al-Kharousi", "year_of_source": "2018", "method_of_calculation": "Average of two regional small-scale surveys used as proxy", "headline": "High Prevalence in Sampled Regions", "extended_text": "Regional surveys in Ad-Dakhiliya and Muscat show 78–95.5% prevalence. Type I is the most common form practiced. Oman has enacted specific criminal provisions against FGM/C.", "legal_status": "Specific criminal provision" },
+            "RUS": { "country": "Russia", "scope_of_data": "Sub-national: Avars in Dagestan", "reported_prevalence": "25.0–100.0", "cleaned_prevalence": 0.35, "source": "Antonova & Siradzhudinova", "year_of_source": "2016", "method_of_calculation": "Normalized: Regional prevalence weighted by Avar population size (~0.7% of Russia)", "headline": "Practiced in Dagestan", "extended_text": "FGM/C (Types I and II) is practiced by Avar and Akhvakh communities in East Dagestan, with local prevalence reaching up to 100%. An estimated 1,240 girls are at risk annually.", "legal_status": "No specific law" },
+            "SAU": { "country": "Saudi Arabia", "scope_of_data": "Sub-national: Jeddah & Hali regions", "reported_prevalence": "18.2–80.3", "cleaned_prevalence": 18.2, "source": "Rouzi et al.", "year_of_source": "2019", "method_of_calculation": "Jeddah mixed-demographic study used as a conservative proxy for national average", "headline": "Medicalized FGM/C", "extended_text": "Studies show localized prevalence up to 80% in regions like Hali. The practice is highly medicalized (over 90% performed by doctors) and affects both Saudi and diaspora women.", "legal_status": "No specific law" },
+            "SEN": { "country": "Senegal", "scope_of_data": "National", "reported_prevalence": "25.2", "cleaned_prevalence": 25.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Stagnant Progress", "extended_text": "Senegal has a prevalence of 25.2%. Despite having a specific criminal provision in place, progress in reducing the rate of FGM/C has stagnated in recent years.", "legal_status": "Specific criminal provision" },
+            "SLE": { "country": "Sierra Leone", "scope_of_data": "National", "reported_prevalence": "83.0", "cleaned_prevalence": 83.0, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Tied to Bondo Society", "extended_text": "Sierra Leone has an 83.0% prevalence, deeply tied to secretive Bondo Society initiations. Recent high-profile deaths of girls have sparked outrage, yet no specific anti-FGM/C law exists.", "legal_status": "No specific law" },
+            "SGP": { "country": "Singapore", "scope_of_data": "Sub-national: Muslim/Malay women", "reported_prevalence": "75.0", "cleaned_prevalence": 11.25, "source": "Time is Now 2025", "year_of_source": "2020", "method_of_calculation": "Normalized: 75% weighted by Malay/Muslim population size (~15% of Singapore)", "headline": "Practiced by Malay/Muslim Community", "extended_text": "While national prevalence is estimated at ~11.25%, pilot surveys indicate a 75% prevalence within the Malay/Muslim minority, mostly involving Type I/IV procedures in early childhood.", "legal_status": "No specific law" },
+            "SOM": { "country": "Somalia", "scope_of_data": "National", "reported_prevalence": "99.2", "cleaned_prevalence": 99.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Highest Prevalence Globally", "extended_text": "Somalia has a near-universal prevalence of 99.2%. While the Constitution prohibits it, there is no national legislation, though the Galmudug state passed a specific ban in 2024.", "legal_status": "No national legislation (Constitutional ban only)" },
+            "SDN": { "country": "Sudan", "scope_of_data": "National", "reported_prevalence": "86.6", "cleaned_prevalence": 86.6, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Severe Forms and Recent Legal Action", "extended_text": "Sudan has an 86.6% prevalence, with Type III (infibulation) being highly common. In July 2020, Sudan amended its Criminal Code to explicitly criminalize the practice.", "legal_status": "Specific criminal provision (2020)" },
+            "TZA": { "country": "Tanzania", "scope_of_data": "National", "reported_prevalence": "8.2", "cleaned_prevalence": 8.2, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence Below 10%", "extended_text": "Tanzania reports an 8.2% prevalence. The country has a specific criminal provision prohibiting FGM/C and has made steady progress toward abandonment.", "legal_status": "Specific criminal provision" },
+            "TGO": { "country": "Togo", "scope_of_data": "National", "reported_prevalence": "3.1", "cleaned_prevalence": 3.1, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Approaching Elimination", "extended_text": "Togo has a very low national prevalence of 3.1%. The government enforces a specific criminal provision against the practice.", "legal_status": "Specific criminal provision" },
+            "UGA": { "country": "Uganda", "scope_of_data": "National", "reported_prevalence": "0.3", "cleaned_prevalence": 0.3, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Near Elimination", "extended_text": "Uganda has nearly eliminated the practice with a prevalence of just 0.3%, supported by robust specific national legislation against FGM/C.", "legal_status": "Specific criminal provision" },
+            "ARE": { "country": "United Arab Emirates", "scope_of_data": "Sub-national: Sampled populations", "reported_prevalence": "34.0–41.4", "cleaned_prevalence": 37.7, "source": "Awar & Al-Jefout et al.", "year_of_source": "2020", "method_of_calculation": "Average of two small-scale surveys used as proxy", "headline": "FGM/C in the UAE", "extended_text": "Small-scale studies indicate a 34–41% prevalence in the United Arab Emirates, mainly Type I. Currently, there is no specific anti-FGM/C legislation in place.", "legal_status": "No specific law" },
+            "YEM": { "country": "Yemen", "scope_of_data": "National", "reported_prevalence": "18.5", "cleaned_prevalence": 18.5, "source": "UNICEF 2024", "year_of_source": "2024", "method_of_calculation": "Nationally representative survey (DHS/MICS)", "headline": "Prevalence at 18.5%", "extended_text": "Yemen reports an 18.5% prevalence, with Type II FGM/C being most commonly practiced. There is currently no specific law addressing the practice.", "legal_status": "No specific law" },
+            "ZMB": { "country": "Zambia", "scope_of_data": "National", "reported_prevalence": "0.7", "cleaned_prevalence": 0.7, "source": "Zambia Sexual Behaviour Survey (ZSBS)", "year_of_source": "2009", "method_of_calculation": "Random sampling of 2500 households", "headline": "Low National Prevalence", "extended_text": "Zambia has a prevalence of 0.7%, with some evidence pointing to practices like labia pulling among diaspora communities. The country has enacted a specific criminal provision.", "legal_status": "Specific criminal provision" }
+        };
+
+        // ── 2. COMPUTED STATS ────────────────────────────────────────────────────
+        const allEntries = Object.values(fgmcData);
+        const withLaw = allEntries.filter(d => d.legal_status.toLowerCase().startsWith('specific criminal')).length;
+
+        document.getElementById('stats-strip').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-value">${allEntries.length}</div>
+                <div class="stat-label">Countries tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">${withLaw}</div>
+                <div class="stat-label">With criminal law</div>
+            </div>
+        `;
+
+        // ── 3. MAP INIT ──────────────────────────────────────────────────────────
+        const map = L.map('map', { zoomControl: false }).setView([15, 20], 3);
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        // CartoDB Positron (no labels) — cleaner basemap for thematic use
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // ── 4. COLOR SCALE ───────────────────────────────────────────────────────
+        function getColor(d) {
+            return d > 80 ? '#800026' :
+                   d > 50 ? '#bd0026' :
+                   d > 25 ? '#e31a1c' :
+                   d > 10 ? '#fc4e2a' :
+                   d > 0  ? '#fd8d3c' :
+                            '#dcdcdc';
+        }
+
+        // ── 5. HELPERS ───────────────────────────────────────────────────────────
+        function getISO(feature) {
+            return feature.properties["ISO3166-1-Alpha-3"] ||
+                   feature.properties.ISO_A3 ||
+                   feature.properties.iso_a3 ||
+                   feature.id;
+        }
+
+        function isSubnational(data) {
+            return data.scope_of_data.toLowerCase().startsWith('sub');
+        }
+
+        function getLegalBadge(status) {
+            const s = status.toLowerCase();
+            if (s.startsWith('specific criminal')) return { cls: 'legal-yes',     label: '✓ ' + status };
+            if (s.startsWith('no specific') || s.startsWith('no national')) return { cls: 'legal-no', label: '✗ ' + status };
+            return { cls: 'legal-partial', label: '~ ' + status };
+        }
+
+        // ── 6. STYLING ───────────────────────────────────────────────────────────
+        function styleMap(feature) {
+            const iso  = getISO(feature);
+            const data = fgmcData[iso];
+            if (data && revealedCountries.has(iso)) {
+                const sub = isSubnational(data);
+                return {
+                    fillColor:   getColor(data.cleaned_prevalence),
+                    fillOpacity: sub ? 0.62 : 0.82,
+                    weight:      sub ? 2    : 1.5,
+                    color:       sub ? '#555' : 'white',
+                    dashArray:   sub ? '5, 4' : null,
+                    opacity:     1
+                };
+            }
+            // No data OR not yet revealed — identical appearance
+            return { fillColor: '#a8b4be', fillOpacity: 0.75, weight: 0.8, color: '#fff', opacity: 1 };
+        }
+
+        // ── 7. KEYBOARD NAVIGATION STATE ─────────────────────────────────────────
+        const sortedKeys = Object.keys(fgmcData).sort((a, b) =>
+            fgmcData[a].country.localeCompare(fgmcData[b].country)
+        );
+        let currentIndex = -1;
+        const countryLayers = {};
+
+        // ── 8. SOURCES MODAL ─────────────────────────────────────────────────────
+        function openSources()  { document.getElementById('sources-backdrop').style.display = 'flex'; }
+        function closeSources() { document.getElementById('sources-backdrop').style.display = 'none'; }
+
+        // ── 9. REVEAL STATE ──────────────────────────────────────────────────────
+        const revealedCountries = new Set();
+
+        function revealAll() {
+            Object.keys(fgmcData).forEach(iso => revealedCountries.add(iso));
+            if (geojsonLayer) geojsonLayer.setStyle(styleMap);
+        }
+
+        function resetColors() {
+            revealedCountries.clear();
+            if (geojsonLayer) geojsonLayer.setStyle(styleMap);
+        }
+
+        // ── 9. MODAL ─────────────────────────────────────────────────────────────
+        const modalBackdrop = document.getElementById('modal-backdrop');
+
+        function openModal(data) {
+            document.getElementById('modal-title').textContent    = data.country;
+            document.getElementById('modal-headline').textContent = data.headline;
+            document.getElementById('modal-extended').textContent = data.extended_text;
+            document.getElementById('modal-source').textContent  = data.source;
+            document.getElementById('modal-year').textContent    = data.year_of_source;
+            document.getElementById('modal-method').textContent  = data.method_of_calculation;
+
+            // Prevalence badges — show both figures for sub-national countries
+            const sub = isSubnational(data);
+            let badges = '';
+            if (sub) {
+                badges += `<span class="data-badge badge-national">National est.: ${data.cleaned_prevalence}%</span>`;
+                badges += `<span class="data-badge badge-community">Community: ${data.reported_prevalence}%</span>`;
+            } else {
+                badges += `<span class="data-badge badge-national">Prevalence: ${data.reported_prevalence}%</span>`;
+            }
+            badges += `<span class="data-badge badge-scope">${data.scope_of_data}</span>`;
+            document.getElementById('modal-badges').innerHTML = badges;
+
+            // Legal status badge
+            const badge = getLegalBadge(data.legal_status);
+            document.getElementById('modal-legal-badge').innerHTML =
+                `<span class="legal-badge ${badge.cls}">${badge.label}</span>`;
+
+            modalBackdrop.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modalBackdrop.style.display = 'none';
+            if (currentIndex >= 0 && geojsonLayer) {
+                // Re-apply styleMap so the revealed colour stays but the highlight border drops
+                const layer = countryLayers[sortedKeys[currentIndex]];
+                if (layer) geojsonLayer.resetStyle(layer);
+            }
+            currentIndex = -1;
+            map.flyTo([15, 20], 3, { duration: 1.0 });
+        }
+
+        modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+
+        // ── 9. KEYBOARD NAVIGATION ───────────────────────────────────────────────
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeModal(); closeSources(); return; }
+            if (e.key === 's' || e.key === 'S') { openSources(); return; }
+
+            const isOpen = modalBackdrop.style.display === 'flex';
+            if (!isOpen && e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % sortedKeys.length;
+                navigateTo(currentIndex);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + sortedKeys.length) % sortedKeys.length;
+                navigateTo(currentIndex);
+            }
+        });
+
+        function navigateTo(index) {
+            const iso   = sortedKeys[index];
+            const layer = countryLayers[iso];
+            if (!layer) return;
+
+            revealedCountries.add(iso);
+            if (geojsonLayer) geojsonLayer.resetStyle();
+
+            const data = fgmcData[iso];
+            layer.setStyle({ fillColor: getColor(data.cleaned_prevalence), fillOpacity: 1, weight: 3, color: '#222', dashArray: null });
+            layer.bringToFront();
+
+            map.flyToBounds(layer.getBounds(), { padding: [90, 90], maxZoom: 6, duration: 0.65 });
+            openModal(data);
+        }
+
+        // ── 10. GEOJSON LOAD & RENDER ────────────────────────────────────────────
+        let geojsonLayer;
+
+        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+            .then(r => r.json())
+            .then(geoData => {
+                geojsonLayer = L.geoJson(geoData, {
+                    style: styleMap,
+                    onEachFeature: function(feature, layer) {
+                        const iso  = getISO(feature);
+                        const data = fgmcData[iso];
+
+                        if (!data) { layer.options.interactive = false; return; }
+
+                        countryLayers[iso] = layer;
+
+                        const sub     = isSubnational(data);
+                        const prevLine = sub
+                            ? `National est.: ${data.cleaned_prevalence}%`
+                            : `Prevalence: ${data.reported_prevalence}%`;
+                        const subNote  = sub ? `<br><em style="opacity:0.65;font-size:11px">Sub-national data</em>` : '';
+
+                        layer.bindTooltip(
+                            `<b>${data.country}</b><br>${prevLine}${subNote}`,
+                            { className: 'custom-tooltip', sticky: true }
+                        );
+
+                        layer.on({
+                            mouseover: function(e) {
+                                if (sortedKeys[currentIndex] === iso) return;
+                                const revealed = revealedCountries.has(iso);
+                                e.target.setStyle({
+                                    weight: revealed ? 3 : 1.5,
+                                    color: revealed ? '#222' : '#aaa',
+                                    fillOpacity: revealed ? 1 : 0.6
+                                });
+                                e.target.bringToFront();
+                            },
+                            mouseout: function(e) {
+                                if (sortedKeys[currentIndex] === iso) return;
+                                geojsonLayer.resetStyle(e.target);
+                            },
+                            click: function() {
+                                revealedCountries.add(iso);
+                                if (geojsonLayer) geojsonLayer.resetStyle();
+                                currentIndex = sortedKeys.indexOf(iso);
+                                layer.setStyle({ fillColor: getColor(data.cleaned_prevalence), fillOpacity: 1, weight: 3, color: '#222', dashArray: null });
+                                layer.bringToFront();
+                                map.flyToBounds(layer.getBounds(), { padding: [90, 90], maxZoom: 6, duration: 0.8 });
+                                openModal(data);
+                            }
+                        });
+                    }
+                }).addTo(map);
+
+                document.getElementById('loading').style.display = 'none';
+            })
+            .catch(() => {
+                document.getElementById('loading').innerHTML =
+                    '<div style="color:#ff7070;font-size:15px;text-align:center;padding:20px">Failed to load map shapes.<br>Check your internet connection.</div>';
+            });
+
+        // ── 11. LEGEND ───────────────────────────────────────────────────────────
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function() {
+            const div    = L.DomUtil.create('div', 'info legend');
+            const grades = [0, 10, 25, 50, 80];
+            div.innerHTML = '<h4>Prevalence (%)</h4>';
+            for (let i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColor(grades[i] + 1) + '"></i>' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+<br>');
+            }
+            div.innerHTML += '<i style="background:#dcdcdc; border:1px solid #ccc;"></i>No data';
+            div.innerHTML += '<hr class="legend-divider"><div class="legend-subnational"><span class="legend-dash-swatch"></span>Sub-national data</div>';
+            return div;
+        };
+        legend.addTo(map);
+
+    </script>
+</body>
+</html>
